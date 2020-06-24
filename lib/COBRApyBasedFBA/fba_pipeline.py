@@ -25,15 +25,15 @@ class FBAPipeline:
         ##media_supplement_list => [],
         
         #Implement knockouts
-        ##feature_ko_list => [],
-        ##reaction_ko_list => [],
+        ##feature_ko_list => [],#strings
+        ##reaction_ko_list => [],#strings
         #Implement custom bounds
-        ##custom_bound_list => [],
+        ##custom_bound_list => [],#[reaction ID,lowerbound,upperbound]
         
         #If requested, make all reactions reversible
         
         #Set objective
-        
+        #converting the input string which is a reaction ID and setting the flux of this reaction as the objective
         #Optimize and save this objective for FBA solution
         
         if self.is_pfba:
@@ -53,7 +53,8 @@ class FBAPipeline:
             #Simulate all single gene knockouts
             pass
         
-        #return result
-
+        #return result (FBA object)
+        #KBaseFBABuilder
+            
         pass
         

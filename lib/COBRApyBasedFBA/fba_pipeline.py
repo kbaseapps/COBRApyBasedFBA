@@ -5,16 +5,13 @@ class FBAPipeline:
         self.is_all_reversible = False #all_reversible
         self.is_pfba = False #minimize_flux
         self.is_single_ko = False #simulate_ko
-        self.fbamodel_workspace = None
-        self.media_workspace = None
-        self.fbamodel_id = None
-        self.media_id = None
+        self.model = None #COBRApy model object
         self.media_supplement_list = []
         self.feature_ko_list = []
         self.reaction_ko_list = []
         self.custom_bound_list = []
         self.target_reaction = "bio1"
-        self.object_id = None #id of the returning FBA object
+        self.output_id = None #id of the returning FBA object (string)
     
     @staticmethod
     def fromKBaseParams(params):
@@ -25,8 +22,6 @@ class FBAPipeline:
     
     
     def run(self):
-        #Load the model
-        #Load media
         ##media_supplement_list => [],
         
         #Implement knockouts

@@ -1,3 +1,5 @@
+import cobra
+
 class FBAPipeline:
     
     def __init__(self):
@@ -6,6 +8,7 @@ class FBAPipeline:
         self.is_pfba = False #minimize_flux
         self.is_single_ko = False #simulate_ko
         self.model = None #COBRApy model object
+        self.fraction_of_optimum = 1.0
         self.media_supplement_list = []
         self.feature_ko_list = []
         self.reaction_ko_list = []
@@ -16,45 +19,71 @@ class FBAPipeline:
     @staticmethod
     def fromKBaseParams(params):
         pipeline = FBAPipeline()
-        ## configure method from params
-        ### pipeline.is_run_fva = params[...]
+        # Configure method from params
+
+        # TODO: this may be all we need. It should update all
+        #       member vars if the params dict has the same
+        #       key names. Need to find out what the key names are.
+        #       otherwise resort to pipeline.is_run_fva = params[...]
+        pipeline.__dict__.update(params)
+
         return pipeline
     
     
     def run(self):
-        ##media_supplement_list => [],
+
+        if self.model is None:
+            raise ValueError('model must be set before calling run')
+
+        # media_supplement_list => [],
         
-        #Implement knockouts
-        ##feature_ko_list => [],#strings
-        ##reaction_ko_list => [],#strings
-        #Implement custom bounds
-        ##custom_bound_list => [],#[reaction ID,lowerbound,upperbound]
+        # TODO: only do this if is_single_ko?
+        # TODO: what is difference between feature_ko and reaction_ko?
+        # Knockouts
+        # TODO: this impl probably doesn't work
+        # cobra.manipulations.delete_model_genes(self.model, self.feature_ko_list)
+        # cobra.manipulations.delete_model_genes(self.model, self.reaction_ko_list)
         
-        #If requested, make all reactions reversible
+        # Add custom bounds to reactions
+        for rct_id, lb, ub in self.custom_bound_list:
+            # TODO: should we check if rct_id is in the reactions?
+            reaction = self.model.reactions.get_by_id(rct_id)
+            reaction.lower_bound = lb
+            reaction.upper_bound = ub
+
+        # If requested, make all reactions reversible
+        if self.is_all_reversible:
+            pass # TODO https://cobrapy.readthedocs.io/en/latest/faq.html?highlight=reversibility#How-do-I-change-the-reversibility-of-a-Reaction?
         
         #Set objective
         #converting the input string which is a reaction ID and setting the flux of this reaction as the objective
         #Optimize and save this objective for FBA solution
-        
+
+        # TODO: can is_pfba and is_run_fva both be True?
+
         if self.is_pfba:
-            #Run PFBA
-            pass
-        else:
-            #optmize
-            pass
-        
-        
+            from cobra.flux_analysis import pfba
+            sol = pfba(self.model,
+                   fraction_of_optimum=self.fraction_of_optimum,
+                   objective=None,
+                   reactions=None)
+
         if self.is_run_fva:
-            #Run FVA
-            ##objective_fraction => 0.1,
-            pass
+            from cobra.flux_analysis import flux_variability_analysis
+            # objective_fraction = 0.1
+            sol = flux_variability_analysis(self.model,
+                    reaction_list=None,
+                    loopless=False,
+                    fraction_of_optimum=self.fraction_of_optimum,
+                    pfba_factor=None)
+
+        # TODO: add support for cobra.flux_analysis.geometric_fba ?
         
         if self.is_single_ko:
             #Simulate all single gene knockouts
             pass
-        
-        #return result (FBA object)
-        #KBaseFBABuilder
+
+        #return result (KBaseFBABuilder object)
             
-        pass
+        return
         

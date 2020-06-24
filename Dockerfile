@@ -11,17 +11,25 @@ MAINTAINER KBase Developer
 # Here we install a python coverage tool and an
 # https library that is out of date in the base image.
 
+FROM python:3.7
+
 RUN pip install coverage
 
 # update security libraries in the base image
-RUN pip install cffi --upgrade \
-    && pip install pyopenssl --upgrade \
-    && pip install ndg-httpsclient --upgrade \
-    && pip install pyasn1 --upgrade \
-    && pip install requests --upgrade \
-    && pip install 'requests[security]' --upgrade
-    && pip install cobra==0.17.1 && \
-    && pip install cobrakbase==0.2.5
+RUN pip install --upgrade pip setuptools wheel cffi
+RUN pip install --upgrade pyopenssl ndg-httpsclient
+RUN pip install --upgrade pyasn1 requests 'requests[security]'
+
+# Install forked version of optlang and cobrapy to add
+# additional solver support COINOR-CBC,CLP and OSQP
+RUN mkdir deps && cd deps
+RUN git clone https://github.com/braceal/optlang.git
+RUN cd optlang && git checkout test/coinor-cbc_osqp && cd ..
+RUN git clone https://github.com/braceal/cobrapy.git
+RUN cd cobrapy && git checkout feature/coinor-cbc_osqp && cd ..
+RUN pip install optlang/
+RUN pip install cobrapy/ && cd ..
+RUN pip install cobrakbase==0.2.5
 
 # -----------------------------------------
 

@@ -20,6 +20,8 @@ RUN pip install cffi --upgrade \
     && pip install pyasn1 --upgrade \
     && pip install requests --upgrade \
     && pip install 'requests[security]' --upgrade
+    && pip install cobra==0.17.1 && \
+    && pip install cobrakbase==0.2.5
 
 # -----------------------------------------
 

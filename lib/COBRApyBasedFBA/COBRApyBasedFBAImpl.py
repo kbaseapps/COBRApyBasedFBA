@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
+from COBRApyBasedFBA.fba_pipeline import FBAPipeline
 #END_HEADER
 
 
@@ -71,6 +72,15 @@ class COBRApyBasedFBA:
         # ctx is the context object
         # return variables are: results
         #BEGIN run_fba_pipeline
+        
+        
+        pipeline = FBAPipeline.fromKBaseParams(params)
+        result = pipeline.run()
+        ## save objects to ws
+        ####Save FBA solution to KBase
+        #####fba_output_id (id inside output result)
+        ## make report
+        
         #END run_fba_pipeline
 
         # At some point might do deeper type checking...

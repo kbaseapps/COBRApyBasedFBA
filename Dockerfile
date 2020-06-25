@@ -16,20 +16,28 @@ FROM python:3.7
 RUN pip install coverage
 
 # update security libraries in the base image
-RUN pip install --upgrade pip setuptools wheel cffi
-RUN pip install --upgrade pyopenssl ndg-httpsclient
-RUN pip install --upgrade pyasn1 requests 'requests[security]'
+RUN pip install --upgrade pip setuptools wheel cffi && \
+    pip install --upgrade pyopenssl ndg-httpsclient && \
+    pip install --upgrade pyasn1 requests 'requests[security]'
 
 # Install forked version of optlang and cobrapy to add
 # additional solver support COINOR-CBC,CLP and OSQP
-RUN mkdir deps && cd deps
-RUN git clone https://github.com/braceal/optlang.git
-RUN cd optlang && git checkout test/coinor-cbc_osqp && cd ..
-RUN git clone https://github.com/braceal/cobrapy.git
-RUN cd cobrapy && git checkout feature/coinor-cbc_osqp && cd ..
-RUN pip install optlang/
-RUN pip install cobrapy/ && cd ..
-RUN pip install cobrakbase==0.2.5
+RUN mkdir deps && cd deps && \
+    git clone https://github.com/braceal/optlang.git && \
+    cd optlang && git checkout test/coinor-cbc_osqp && cd .. && \
+    git clone https://github.com/braceal/cobrapy.git && \
+    cd cobrapy && git checkout feature/coinor-cbc_osqp && cd .. && \
+    pip install optlang/ && \
+    pip install cobrapy/ && cd .. && \
+    pip install cobrakbase==0.2.5
+
+# Install kb-sdk
+#RUN git clone https://github.com/kbase/kb_sdk && \
+#    git clone https://github.com/kbase/jars && \
+#    cd kb_sdk && \
+#    make bin  && \
+#    export PATH=$(pwd)/bin:$PATH && \
+#    make sdkbase
 
 # -----------------------------------------
 

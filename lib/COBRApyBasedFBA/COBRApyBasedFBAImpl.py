@@ -73,13 +73,29 @@ class COBRApyBasedFBA:
         # return variables are: results
         #BEGIN run_fba_pipeline
         
+        kbase = cobrakbase.KBaseAPI(ctx['token'])
+        fbamodel_json = kbase.get_object(params['fbamodel_id'], params['fbamodel_workspace'])
+        fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
         
-        pipeline = FBAPipeline.fromKBaseParams(params)
-        result = pipeline.run()
-        ## save objects to ws
-        ####Save FBA solution to KBase
-        #####fba_output_id (id inside output result)
-        ## make report
+        # Retrieve media
+        media_json = kbase.get_object(params['media_id'], params['media_workspace'])
+        media = cobrakbase.core.KBaseBiochemMedia(media_json)
+
+        # TODO: add extra compounds to media with params['media_supplement_list']
+        #       see what these params look like
+
+        builder = KBaseFBAModelToCobraBuilder(fbamodel)
+        model = builder.with_media(media).build()
+
+        pipeline = FBAPipeline.fromKBaseParams(mock_params)
+        result = pipeline.run(model, media)
+
+        results = {'result': result}
+
+        # TODO: save objects to ws
+        #       Save FBA solution to KBase
+        #       fba_output_id (id inside output result)
+        #       make html report with report client 'sdk install <report client name>'
         
         #END run_fba_pipeline
 

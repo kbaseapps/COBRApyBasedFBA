@@ -102,7 +102,7 @@ class FBAPipeline:
             for gene in model.genes:
                 cobra.manipulations.delete_model_genes(model, [gene])
                 sol = model.optimize()
-                if sol.status != 'optimal' or math.isclose(sol.objective.value, 0):
+                if sol.status != 'optimal' or math.isclose(sol.objective_value, 0):
                     essential_genes.add(gene.id)
                 cobra.manipulation.undelete_model_genes(model, [gene])
                 # TODO: add a getter function in KBaseFBABuilder def gene_esential(gene): query set -> bool

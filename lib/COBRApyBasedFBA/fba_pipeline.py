@@ -17,7 +17,7 @@ class FBAPipeline:
         self.feature_ko_list = [] # This knocks out genes (which could knockout reactions)
         self.reaction_ko_list = [] # This knocks out features
         self.custom_bound_list = []
-        self.target_reaction = 'bio1'
+        self.target_reaction = ''
         self.output_id = '' # id of the returning FBA object
         self.workspace = ''
 
@@ -47,21 +47,22 @@ class FBAPipeline:
         for rct_id, lb, ub in self.custom_bound_list:
             # TODO: should we check if rct_id is in the reactions?
             #       depends on interface is it plain text? then yes
-            rct = self.model.reactions.get_by_id(rct_id)
+            rct = model.reactions.get_by_id(rct_id)
             rct.lower_bound, rct.upper_bound = lb, ub
 
         # If specified, make all reactions reversible
         if self.is_all_reversible:
-            for rct in self.model.reactions:
+            for rct in model.reactions:
                 rct.upper_bound = self.MAX_BOUND
                 rct.lower_bound = self.MAX_BOUND * -1
 
         # Knockouts
-        cobra.manipulations.delete_model_genes(self.model, self.feature_ko_list)
+        if self.feature_ko_list:
+            cobra.manipulation.delete_model_genes(model, self.feature_ko_list)
         for rct_id in self.reaction_ko_list:
             # TODO: should we check if rct_id is in the reactions?
             #       depends on interface is it plain text? then yes
-            rct = self.model.reactions.get_by_id(rct_id)
+            rct = model.reactions.get_by_id(rct_id)
             rct.lower_bound, rct.upper_bound = 0, 0
 
         # Set max uptakes
@@ -79,33 +80,38 @@ class FBAPipeline:
         # converting the input string which is a reaction ID and setting the flux of this reaction as the objective
         # Optimize and save this objective for FBA solution
         # TODO: may have bugs. test this
-        model.objective = self.target_reaction
+        if self.target_reaction:
+            model.objective = self.target_reaction
 
         if self.is_pfba:
             from cobra.flux_analysis import pfba
-            fba_sol = pfba(self.model,
+            fba_sol = pfba(model,
                            fraction_of_optimum=self.fraction_of_optimum,
                            objective=None, # TODO: do we need these params?
                            reactions=None)
         else:
-            from cobra.flux_analysis import fba
+            # Run vanilla FBA
             fba_sol = model.optimize()
 
+        fva_sol = None
         if self.is_run_fva:
             from cobra.flux_analysis import flux_variability_analysis as fva
-            fva_sol = fva(self.model,
+            fva_sol = fva(model,
                           fraction_of_optimum=self.fraction_of_optimum)
         
         # If specified, simulate all single gene knockouts
+        essential_genes = set()
         if self.is_single_ko:
-            essential_genes = set()
             for gene in model.genes:
-                cobra.manipulations.delete_model_genes(model, [gene])
+                cobra.manipulation.delete_model_genes(model, [gene])
                 sol = model.optimize()
                 if sol.status != 'optimal' or math.isclose(sol.objective_value, 0):
                     essential_genes.add(gene.id)
-                cobra.manipulation.undelete_model_genes(model, [gene])
+                cobra.manipulation.undelete_model_genes(model)
                 # TODO: add a getter function in KBaseFBABuilder def gene_esential(gene): query set -> bool
+
+        # TODO: temporary return for testing
+        return fba_sol, fva_sol, essential_genes
 
         fba_builder = KBaseFBABuilder.fromCobra(self.output_id,
                                                 model,

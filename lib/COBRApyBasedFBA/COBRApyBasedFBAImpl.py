@@ -93,12 +93,22 @@ class COBRApyBasedFBA:
         print('PARAMS')
         print(params)
 
+        # TODO: temp fix Filipe's problem
+        if params['target_reaction'] == 'bio1':
+          params['target_reaction'] += '_biomass'
+
+        # TODO: this is temp fix. UI does not contain workspace. update spec
+        params['fbamodel_workspace'] = params['workspace']
+        params['media_workspace'] = params['workspace']
+
         kbase = cobrakbase.KBaseAPI(ctx['token'], dev=True)
-        fbamodel_json = kbase.get_object(params['fbamodel_id'], params['fbamodel_workspace'])
+        ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
+        fbamodel_json = kbase.get_object(ref.id, ref.workspace_id)
         fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
         
         # Retrieve media
-        media_json = kbase.get_object(params['media_id'], params['media_workspace'])
+        ref = kbase.get_object_info_from_ref(params['media_id'])
+        media_json = kbase.get_object(ref.id, ref.workspace_id)
         media = cobrakbase.core.KBaseBiochemMedia(media_json)
 
         # TODO: add extra compounds to media with params['media_supplement_list']

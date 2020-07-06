@@ -105,7 +105,7 @@ class COBRApyBasedFBATest(unittest.TestCase):
                                             # Name of object we are going to save (to put back in workspace)
             'workspace':             self.wsName,
             'fva':                   False,
-            'minimize_flux':         False, # pfba
+            'minimize_flux':         False, # pfba # TODO: these are ints 0, 1
             'simulate_ko':           False,
             'all_reversible':        False,
             'feature_ko_list':       [], #['L192589', 'L182555'],     # TODO: what is a feature?
@@ -119,6 +119,12 @@ class COBRApyBasedFBATest(unittest.TestCase):
             'max_o_uptake':          0.,
             'default_max_uptake':    0.
         }
+
+        # From kbase
+        params = {'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1',
+        'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'test_result',
+        'fva': 1, 'minimize_flux': 1, 'simulate_ko': 0, 'feature_ko_list': '', 'reaction_ko_list': '',
+        'media_supplement_list': ''}
         
         self.serviceImpl.run_fba_pipeline(self.ctx, params)
 

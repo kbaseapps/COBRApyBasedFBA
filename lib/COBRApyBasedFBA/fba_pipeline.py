@@ -32,10 +32,10 @@ class FBAPipeline:
 
         # Configure method from params
         p.is_run_fva = params['fva']
-        p.is_all_reversible = params['all_reversible']
+        #p.is_all_reversible = params['all_reversible'] #TODO: doesn't exist in UI
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
-        p.fraction_of_optimum = params['objective_fraction']
+        #p.fraction_of_optimum = params['objective_fraction'] #TODO: not in UI
         p.media_supplement_list = params['media_supplement_list']
         p.feature_ko_list = params['feature_ko_list']
         p.reaction_ko_list = params['reaction_ko_list']
@@ -136,7 +136,7 @@ class FBAPipeline:
         if self.is_run_fva:
             from cobra.flux_analysis import flux_variability_analysis as fva
             fva_sol = fva(model,
-                          processes=self.processes,
+                          processes=self.fva_processes,
                           loopless=self.loopless_fva,
                           fraction_of_optimum=self.fraction_of_optimum)
         

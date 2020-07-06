@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
+# The header block is where all import statments should live
+import logging
+import os
+from pprint import pformat
+
+from installed_clients.KBaseReportClient import KBaseReport
 from COBRApyBasedFBA.fba_pipeline import FBAPipeline
+from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
+import cobrakbase
 #END_HEADER
 
 
@@ -20,16 +28,24 @@ class COBRApyBasedFBA:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = "git@github.com:kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "30c47badca8a2a8808f0fd4e2373fc807a213565"
+    GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
+    GIT_COMMIT_HASH = "c549795a443f9bac9bd191f9c8a51cbf4a3f53b3"
 
     #BEGIN_CLASS_HEADER
+    # Class variables and functions can be defined in this block
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
     # be found
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
+        
+        # Any configuration parameters that are important should be parsed and
+        # saved in the constructor.
+        self.callback_url = os.environ['SDK_CALLBACK_URL']
+        self.shared_folder = config['scratch']
+        logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
+                            level=logging.INFO)
         #END_CONSTRUCTOR
         pass
 
@@ -72,8 +88,12 @@ class COBRApyBasedFBA:
         # ctx is the context object
         # return variables are: results
         #BEGIN run_fba_pipeline
-        
-        kbase = cobrakbase.KBaseAPI(ctx['token'])
+
+        # TODO: for debugging
+        print('PARAMS')
+        print(params)
+
+        kbase = cobrakbase.KBaseAPI(ctx['token'], dev=True)
         fbamodel_json = kbase.get_object(params['fbamodel_id'], params['fbamodel_workspace'])
         fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
         
@@ -87,16 +107,36 @@ class COBRApyBasedFBA:
         builder = KBaseFBAModelToCobraBuilder(fbamodel)
         model = builder.with_media(media).build()
 
-        pipeline = FBAPipeline.fromKBaseParams(mock_params)
+        pipeline = FBAPipeline.fromKBaseParams(params)
+        # Result is fba type object
         result = pipeline.run(model, media)
+        # kbase_ref is list of lists with only one inner list
+        kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
-        results = {'result': result}
+        # Step 5 - Build a Report and return
+        reportObj = {
+            'objects_created': [{'ref': f"{params['workspace']}/{params['fba_output_id']}",
+                                 'description': 'FBA'}],
+            'text_message': 'TODO: print FBA solution, etc'
+        }
+        print("callback_url: ", self.callback_url)
+        report = KBaseReport(self.callback_url)
+        report_info = report.create({'report': reportObj, 'workspace_name': params['workspace']})
+
+        # STEP 6: contruct the output to send back
+        results = {'report_name': report_info['name'],
+                  'report_ref': report_info['ref'],
+                  'workspace_name': params['workspace'],
+                  'ws': params['workspace'],
+                  'type': 'KBaseFBA.FBA',
+                  'obj': params['fba_output_id']
+                  }
 
         # TODO: save objects to ws
         #       Save FBA solution to KBase
         #       fba_output_id (id inside output result)
         #       make html report with report client 'sdk install <report client name>'
-        
+
         #END run_fba_pipeline
 
         # At some point might do deeper type checking...

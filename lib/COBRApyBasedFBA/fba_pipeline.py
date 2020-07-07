@@ -12,8 +12,8 @@ class FBAPipeline:
         self.is_all_reversible = False # all_reversible
         self.is_pfba = False # minimize_flux
         self.is_single_ko = False #s imulate_ko
-        self.loopless_fba = False
-        self.loopless_fva = False
+        self.is_loopless_fba = False
+        self.is_loopless_fva = False
         self.fva_processes = None
         self.fraction_of_optimum = 1.0
         self.media_supplement_list = []
@@ -50,8 +50,8 @@ class FBAPipeline:
         p.solver = 'coinor_cbc' # params['solver'] # TODO: add to UI
         p.workspace = params['fbamodel_workspace']
         p.minimize_objective = params['minimize_objective']
-        p.loopless_fba = False # TODO: add to UI
-        p.loopless_fva = False # TODO: add to UI
+        p.is_loopless_fba = params['loopless_fba']
+        p.is_loopless_fva = params['loopless_fva']
         p.fva_processes = None # TODO: add to UI or assign max amount
         p.output_id = params['fba_output_id']
 
@@ -124,9 +124,12 @@ class FBAPipeline:
 
         # TODO: Look at compounds and check the formula in cobra model. name of field is formula
 
+        # TODO: remove. for debuging
+        print('loopless_fba: ', self.is_loopless_fba)
+        print('loopless_fva: ', self.is_loopless_fva)
+
+
         # Set objective
-        # converting the input string which is a reaction ID and setting the flux of this reaction as the objective
-        # Optimize and save this objective for FBA solution
         if self.target_reaction:
             model.objective = self.target_reaction
 
@@ -138,19 +141,19 @@ class FBAPipeline:
             from cobra.flux_analysis import pfba
             fba_sol = pfba(model,
                            fraction_of_optimum=self.fraction_of_optimum)
+        elif self.is_loopless_fba:
+            # Run CycleFreeFlux algorithm
+            fba_sol = cobra.flux_analysis.loopless_solution(model)
         else:
             # Run vanilla FBA
-            with model:
-                if self.loopless_fba:
-                    add_loopless(model)
-                fba_sol = model.optimize()
+            fba_sol = model.optimize()
 
         fva_sol = None
         if self.is_run_fva:
             from cobra.flux_analysis import flux_variability_analysis as fva
             fva_sol = fva(model,
                           processes=self.fva_processes,
-                          loopless=self.loopless_fva,
+                          loopless=self.is_loopless_fva,
                           fraction_of_optimum=self.fraction_of_optimum)
         
         # If specified, simulate all single gene knockouts

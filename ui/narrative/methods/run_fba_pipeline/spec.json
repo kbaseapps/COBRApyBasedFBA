@@ -144,6 +144,40 @@
          "field_type" : "checkbox"
       },
       {
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "checkbox_options" : {
+            "unchecked_value" : 0,
+            "checked_value" : 1
+         },
+         "default_values" : [
+            "0"
+         ],
+         "advanced" : true,
+         "id" : "loopless_fba",
+         "allow_multiple" : false,
+         "optional" : false,
+         "field_type" : "checkbox"
+      },
+      {
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "checkbox_options" : {
+            "unchecked_value" : 0,
+            "checked_value" : 1
+         },
+         "default_values" : [
+            "0"
+         ],
+         "advanced" : true,
+         "id" : "loopless_fva",
+         "allow_multiple" : false,
+         "optional" : false,
+         "field_type" : "checkbox"
+      },
+      {
          "advanced" : true,
          "default_values" : [
             "0"
@@ -376,6 +410,14 @@
             {
                "input_parameter" : "minimize_flux",
                "target_property" : "minimize_flux"
+            },
+            {
+               "input_parameter" : "loopless_fba",
+               "target_property" : "loopless_fba"
+            },
+            {
+               "input_parameter" : "loopless_fva",
+               "target_property" : "loopless_fva"
             },
             {
                "input_parameter" : "simulate_ko",

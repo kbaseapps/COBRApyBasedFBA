@@ -35,12 +35,11 @@ parameters :
         placeholder : |
             Model for FBA
 
-
     minimize_flux :
         ui-name : |
             Minimize Flux?
         short-hint : |
-            Check this box to minize the sum of all fluxes *after* the primary objective function has been optimized.
+            Check this box to minimize the sum of all fluxes *after* the primary objective function has been optimized i.e. run parsimonious FBA.
 
     all_reversible :
         ui-name : |
@@ -54,19 +53,29 @@ parameters :
         short-hint : |
             Check this box to minimize the model objective. If unchecked, objective will be maximized.
 
+    loopless_fba :
+        ui-name : |
+            Run loopless FBA?
+        short-hint : |
+            Check this box to run loopless FBA with the CycleFreeFlux algorithm. Does not run if *Minimize Flux* is checked.
+
+    loopless_fva :
+        ui-name : |
+            Run loopless FVA?
+        short-hint : |
+            Check this box to run loopless FVA with the CycleFreeFlux algorithm.
+
     max_c_uptake :
         ui-name : |
             Max carbon uptake
         short-hint : |
             Maximum number of total moles of carbon permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
 
-
     feature_ko_list :
         ui-name : |
             Gene Knockouts
         short-hint : |
             User may add gene knockout information one at a time using “add another gene knockout” button. Gene IDs should be in the same format that appears in your metabolic model (e.g., kb|g.220339.CDS.2927).
-
 
     media_id :
         ui-name : |
@@ -75,7 +84,6 @@ parameters :
             Media specifies the set of chemical compounds an organism can use for its growth. If left blank, the default Complete media is used. The “Complete” media is an abstraction of what is available in our biochemistry database. Every compound that can be transported from the extracellular compartment into the cell–or, in other words, for which a transport reaction is available–is used in the Complete media. This list is built in real-time, meaning that whenever you run FBA with Complete media, the available transporters are parsed from the media database–and is therefore not stored permanently in any media object in the workspace.
         placeholder : |
             Growth condition for FBA
-
 
     simulate_ko :
         ui-name : |
@@ -89,13 +97,11 @@ parameters :
         short-hint : |
             Maximum number of total moles of sulfur permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
 
-
     max_p_uptake :
         ui-name : |
             Max phosphate uptake
         short-hint : |
             Maximum number of total moles of phosphate permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
-
 
     fba_output_id :
         ui-name : |

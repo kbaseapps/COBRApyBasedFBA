@@ -121,5 +121,5 @@ class COBRApyBasedFBATest(unittest.TestCase):
         }
 
         # From kbase
-        params = {'minimize_objective':0, 'all_reversible':0, 'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1', 'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'FBA_test_result', 'fva': 0, 'minimize_flux': 0, 'simulate_ko': 0, 'feature_ko_list': 'b0001', 'reaction_ko_list': '', 'media_supplement_list': '', 'max_c_uptake': None, 'max_n_uptake': None, 'max_p_uptake': None, 'max_s_uptake': None, 'max_o_uptake': None}
+        params = {'loopless_fba':1, 'loopless_fva':1, 'minimize_objective':0, 'all_reversible':0, 'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1', 'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'FBA_test_result', 'fva': 0, 'minimize_flux': 0, 'simulate_ko': 0, 'feature_ko_list': 'b0001', 'reaction_ko_list': '', 'media_supplement_list': '', 'max_c_uptake': None, 'max_n_uptake': None, 'max_p_uptake': None, 'max_s_uptake': None, 'max_o_uptake': None}
         self.serviceImpl.run_fba_pipeline(self.ctx, params)

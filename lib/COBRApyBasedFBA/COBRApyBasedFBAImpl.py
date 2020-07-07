@@ -29,7 +29,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "c549795a443f9bac9bd191f9c8a51cbf4a3f53b3"
+    GIT_COMMIT_HASH = "2534dc4a0df90ed5b3b9169c2d24b1c409e3f52f"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -64,8 +64,11 @@ class COBRApyBasedFBA:
            reaction id.), parameter "fba_output_id" of type "fba_id" (A
            string representing a FBA id.), parameter "workspace" of type
            "workspace_name" (A string representing a workspace name.),
+           parameter "minimize_objective" of type "bool" (A binary boolean),
            parameter "fva" of type "bool" (A binary boolean), parameter
            "minimize_flux" of type "bool" (A binary boolean), parameter
+           "loopless_fba" of type "bool" (A binary boolean), parameter
+           "loopless_fva" of type "bool" (A binary boolean), parameter
            "simulate_ko" of type "bool" (A binary boolean), parameter
            "all_reversible" of type "bool" (A binary boolean), parameter
            "feature_ko_list" of list of type "feature_id" (A string

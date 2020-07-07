@@ -60,8 +60,11 @@ module COBRApyBasedFBA {
         fba_id fba_output_id;
         workspace_name workspace;
         
+        bool minimize_objective;
         bool fva;
         bool minimize_flux;
+        bool loopless_fba;
+        bool loopless_fva;
         bool simulate_ko;
         bool all_reversible;
         

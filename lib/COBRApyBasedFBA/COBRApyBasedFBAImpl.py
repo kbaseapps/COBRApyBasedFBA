@@ -93,7 +93,7 @@ class COBRApyBasedFBA:
         print('PARAMS')
         print(params)
 
-        # TODO: temp fix Filipe's problem
+        # TODO: temp fix. Filipe's problem
         if params['target_reaction'] == 'bio1':
           params['target_reaction'] += '_biomass'
 
@@ -101,6 +101,7 @@ class COBRApyBasedFBA:
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
 
+        # TODO: toggle dev=False when we test on production
         kbase = cobrakbase.KBaseAPI(ctx['token'], dev=True)
         ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
         fbamodel_json = kbase.get_object(ref.id, ref.workspace_id)
@@ -131,21 +132,17 @@ class COBRApyBasedFBA:
         }
         print("callback_url: ", self.callback_url)
         report = KBaseReport(self.callback_url)
+        # TODO: create_extended_report function
         report_info = report.create({'report': reportObj, 'workspace_name': params['workspace']})
 
         # STEP 6: contruct the output to send back
         results = {'report_name': report_info['name'],
-                  'report_ref': report_info['ref'],
-                  'workspace_name': params['workspace'],
-                  'ws': params['workspace'],
-                  'type': 'KBaseFBA.FBA',
-                  'obj': params['fba_output_id']
+                   'report_ref': report_info['ref'],
+                   'workspace_name': params['workspace'],
+                   'ws': params['workspace'],
+                   'type': 'KBaseFBA.FBA',
+                   'obj': params['fba_output_id']
                   }
-
-        # TODO: save objects to ws
-        #       Save FBA solution to KBase
-        #       fba_output_id (id inside output result)
-        #       make html report with report client 'sdk install <report client name>'
 
         #END run_fba_pipeline
 

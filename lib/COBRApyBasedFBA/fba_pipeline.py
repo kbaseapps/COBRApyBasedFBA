@@ -18,7 +18,7 @@ class FBAPipeline:
         self.fraction_of_optimum = 1.0
         self.media_supplement_list = []
         self.feature_ko_list = [] # This knocks out genes (which could knockout reactions)
-        self.reaction_ko_list = [] # This knocks out features
+        self.reaction_ko_list = [] # This knocks out reactions
         self.custom_bound_list = []
         self.target_reaction = '' # TODO: what is bio1?
         self.solver = 'coinor_cbc'
@@ -36,9 +36,9 @@ class FBAPipeline:
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
         #p.fraction_of_optimum = params['objective_fraction'] #TODO: not in UI
-        p.media_supplement_list = params['media_supplement_list']
-        p.feature_ko_list = params['feature_ko_list']
-        p.reaction_ko_list = params['reaction_ko_list']
+        p.media_supplement_list = params['media_supplement_list'].split(',')
+        p.feature_ko_list = params['feature_ko_list'].split(',')
+        p.reaction_ko_list = params['reaction_ko_list'].split(',')
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
         p.target_reaction = params['target_reaction']
         p.solver = 'coinor_cbc' # params['solver'] # TODO: add to UI
@@ -143,19 +143,10 @@ class FBAPipeline:
         # If specified, simulate all single gene knockouts
         essential_genes = set()
         if self.is_single_ko:
-            for gene in model.genes:
-                with model as model:
-                    gene.knock_out()
-                    #cobra.manipulation.delete_model_genes(model, [gene])
-                    sol = model.optimize()
-                    if sol.status != 'optimal' or math.isclose(sol.objective_value, 0, abs_tol=1e-9):
-                        essential_genes.add(gene.id)
-                    #cobra.manipulation.undelete_model_genes(model)
-                    # TODO: add a getter function in KBaseFBABuilder def gene_esential(gene): query set -> bool
+            essential_genes = cobra.flux_analysis.variability. \
+                              find_essential_genes(model, threshold=1e-11)
 
-
-        # TODO: temporary return for testing
-        #return fba_sol, fva_sol, essential_genes
+        # TODO: add a getter function in KBaseFBABuilder def gene_esential(gene): query set -> bool
 
         print('self.output_id: ', self.output_id)
         fba_builder = KBaseFBABuilder.fromCobra(self.output_id,
@@ -167,17 +158,11 @@ class FBAPipeline:
         b = fba_builder.build()
         #print('builder object: ', b)
         # TODO: add fva_sol and essential_genes to this object in cobrakbase
-            
+
         return b
         
 
 if __name__ == '__main__':
-    import pickle
-    with open('test.pkl', 'rb') as f:
-        data = pickle.load(f)
-
-    model = data['model']
-    media = data['media']
 
     params = {
         'fbamodel_id':           'Lactococcus_lactis_model',
@@ -204,6 +189,3 @@ if __name__ == '__main__':
         'max_o_uptake':          0.,
         'default_max_uptake':    0.
     }
-
-    pipeline = FBAPipeline.fromKBaseParams(params)
-    fba_sol, fva_sol, essential_genes = pipeline.run(model, media)

@@ -79,11 +79,11 @@ class FBAPipeline:
                 rct.upper_bound = self.MAX_BOUND
                 rct.lower_bound = self.MAX_BOUND * -1
 
+        # Filter out user specified genes to ko that are not in model.
+        self.feature_ko_list = list(filter(lambda gene: gene in model.genes,
+                                           self.feature_ko_list))
         # Knockouts
         if self.feature_ko_list:
-            # Filter out user specified genes to ko that are not in model.
-            self.feature_ko_list = list(filter(lambda gene: gene in model.genes,
-                                               self.feature_ko_list))
             cobra.manipulation.delete_model_genes(model, self.feature_ko_list)
 
         for rct_id in self.reaction_ko_list:

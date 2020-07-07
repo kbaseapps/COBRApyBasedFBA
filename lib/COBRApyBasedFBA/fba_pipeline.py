@@ -20,11 +20,11 @@ class FBAPipeline:
         self.feature_ko_list = [] # This knocks out genes (which could knockout reactions)
         self.reaction_ko_list = [] # This knocks out reactions
         self.custom_bound_list = []
-        self.target_reaction = '' # TODO: what is bio1?
+        self.target_reaction = ''
         self.solver = 'coinor_cbc'
         self.output_id = '' # id of the returning FBA object
         self.workspace = ''
-        self.maximize_objective = True # togles max and min
+        self.minimize_objective = False # togles max and min of objective
 
     @staticmethod
     def fromKBaseParams(params):
@@ -35,7 +35,7 @@ class FBAPipeline:
         p.is_all_reversible = params['all_reversible']
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
-        #p.fraction_of_optimum = params['objective_fraction'] #TODO: not in UI
+        #p.fraction_of_optimum = params['objective_fraction'] # TODO: not in UI
 
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
@@ -49,7 +49,7 @@ class FBAPipeline:
         p.target_reaction = params['target_reaction']
         p.solver = 'coinor_cbc' # params['solver'] # TODO: add to UI
         p.workspace = params['fbamodel_workspace']
-        p.maximize_objective = True # TODO: add to UI
+        p.minimize_objective = params['minimize_objective']
         p.loopless_fba = False # TODO: add to UI
         p.loopless_fva = False # TODO: add to UI
         p.fva_processes = None # TODO: add to UI or assign max amount
@@ -75,7 +75,6 @@ class FBAPipeline:
 
         # If specified, make all reactions reversible
         if self.is_all_reversible:
-            print('Making all reactions reversible')
             for rct in model.reactions:
                 rct.upper_bound = self.MAX_BOUND
                 rct.lower_bound = self.MAX_BOUND * -1
@@ -128,11 +127,12 @@ class FBAPipeline:
         # Set objective
         # converting the input string which is a reaction ID and setting the flux of this reaction as the objective
         # Optimize and save this objective for FBA solution
-        # TODO: may have bugs. test this
         if self.target_reaction:
             model.objective = self.target_reaction
 
-        # TODO: add min/max checkbox.
+        # Set direction of the objective function, maximize by default.
+        if self.minimize_objective:
+            model.objective.direction = 'min'
 
         if self.is_pfba:
             from cobra.flux_analysis import pfba

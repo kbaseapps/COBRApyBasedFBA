@@ -93,6 +93,23 @@
          }
       },
       {
+         "advanced" : true,
+         "default_values" : [
+            "0"
+         ],
+         "checkbox_options" : {
+            "checked_value" : 1,
+            "unchecked_value" : 0
+         },
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "field_type" : "checkbox",
+         "allow_multiple" : false,
+         "optional" : false,
+         "id" : "minimize_objective"
+      },
+      {
          "default_values" : [
             "1"
          ],
@@ -347,6 +364,10 @@
             {
                "input_parameter" : "fba_output_id",
                "target_property" : "fba_output_id"
+            },
+            {
+               "input_parameter" : "minimize_objective",
+               "target_property" : "minimize_objective"
             },
             {
                "input_parameter" : "fva",

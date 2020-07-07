@@ -48,6 +48,12 @@ parameters :
         short-hint : |
             Check this box to make all reactions in the model reversible.
 
+    minimize_objective :
+        ui-name : |
+            Minimize model objective?
+        short-hint : |
+            Check this box to minimize the model objective. If unchecked, objective will be maximized.
+
     max_c_uptake :
         ui-name : |
             Max carbon uptake
@@ -107,7 +113,7 @@ parameters :
 
     target_reaction :
         ui-name : |
-            Reaction to maximize
+            Reaction to optimize
         short-hint : |
             ID of reaction flux to maximize in FBA. Only one reaction can be selected. First you must deselect the default reaction ‘bio1’ and then select the desired target reaction to maximize. You may use the search box to search through the available reactions in your model.
 

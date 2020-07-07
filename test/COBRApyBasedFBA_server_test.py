@@ -122,21 +122,9 @@ class COBRApyBasedFBATest(unittest.TestCase):
 
         # From kbase
         params = {'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1',
-        'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'test_result',
-        'fva': 1, 'minimize_flux': 1, 'simulate_ko': 0, 'feature_ko_list': '', 'reaction_ko_list': '',
-        'media_supplement_list': ''}
+                  'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'test_result_3',
+                  'fva': 0, 'minimize_flux': 0, 'simulate_ko': 0, 'feature_ko_list': 'b0001,b0002',
+                  'reaction_ko_list': '', 'media_supplement_list': '', 'max_c_uptake': None,
+                  'max_n_uptake': None, 'max_p_uptake': None, 'max_s_uptake': None, 'max_o_uptake': None}
         
         self.serviceImpl.run_fba_pipeline(self.ctx, params)
-
-        # My Changes
-        # pipeline = FBAPipeline.fromKBaseParams(params)
-        # result = pipeline.run()
-
-        # TODO: 2 types of test
-        #       execution test (calls from kbase)
-
-        # Check returned data with
-        # self.assertEqual(ret[...], ...) or other unittest methods
-        pass
-
-

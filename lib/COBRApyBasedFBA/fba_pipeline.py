@@ -36,9 +36,15 @@ class FBAPipeline:
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
         #p.fraction_of_optimum = params['objective_fraction'] #TODO: not in UI
-        p.media_supplement_list = params['media_supplement_list'].split(',')
-        p.feature_ko_list = params['feature_ko_list'].split(',')
-        p.reaction_ko_list = params['reaction_ko_list'].split(',')
+
+        # Check if list params contain data. If so parse, else use default []
+        if params['media_supplement_list']:
+            p.media_supplement_list = params['media_supplement_list'].split(',')
+        if params['feature_ko_list']:
+            p.feature_ko_list = params['feature_ko_list'].split(',')
+        if params['reaction_ko_list']:
+            p.reaction_ko_list = params['reaction_ko_list'].split(',')
+
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
         p.target_reaction = params['target_reaction']
         p.solver = 'coinor_cbc' # params['solver'] # TODO: add to UI
@@ -75,7 +81,11 @@ class FBAPipeline:
 
         # Knockouts
         if self.feature_ko_list:
+            # Filter out user specified genes to ko that are not in model.
+            self.feature_ko_list = list(filter(lambda gene: gene in model.genes,
+                                               self.feature_ko_list))
             cobra.manipulation.delete_model_genes(model, self.feature_ko_list)
+
         for rct_id in self.reaction_ko_list:
             # TODO: should we check if rct_id is in the reactions?
             #       depends on interface is it plain text? then yes
@@ -146,9 +156,6 @@ class FBAPipeline:
             essential_genes = cobra.flux_analysis.variability. \
                               find_essential_genes(model, threshold=1e-11)
 
-        # TODO: add a getter function in KBaseFBABuilder def gene_esential(gene): query set -> bool
-
-        print('self.output_id: ', self.output_id)
         fba_builder = KBaseFBABuilder.fromCobra(self.output_id,
                                                 model,
                                                 fba_sol,
@@ -156,9 +163,7 @@ class FBAPipeline:
                                                 self.workspace)
 
         b = fba_builder.build()
-        #print('builder object: ', b)
         # TODO: add fva_sol and essential_genes to this object in cobrakbase
-
         return b
         
 

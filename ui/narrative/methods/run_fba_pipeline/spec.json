@@ -361,6 +361,10 @@
                "target_property" : "simulate_ko"
             },
             {
+               "input_parameter" : "all_reversible",
+               "target_property" : "all_reversible"
+            },
+            {
                "target_property" : "feature_ko_list",
                "input_parameter" : "feature_ko_list"
             },

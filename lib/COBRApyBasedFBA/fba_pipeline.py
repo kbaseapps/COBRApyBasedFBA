@@ -32,7 +32,7 @@ class FBAPipeline:
 
         # Configure method from params
         p.is_run_fva = params['fva']
-        #p.is_all_reversible = params['all_reversible'] #TODO: doesn't exist in UI
+        p.is_all_reversible = params['all_reversible']
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
         #p.fraction_of_optimum = params['objective_fraction'] #TODO: not in UI
@@ -75,6 +75,7 @@ class FBAPipeline:
 
         # If specified, make all reactions reversible
         if self.is_all_reversible:
+            print('Making all reactions reversible')
             for rct in model.reactions:
                 rct.upper_bound = self.MAX_BOUND
                 rct.lower_bound = self.MAX_BOUND * -1
@@ -119,6 +120,8 @@ class FBAPipeline:
         #     TODO: check total_carbon sum(exchangeflux * carbon coefficient).
         #           add constr: total_carbon < max_c_uptake
 
+        # TODO: handle media_supplement_list
+
 
         # TODO: Look at compounds and check the formula in cobra model. name of field is formula
 
@@ -129,7 +132,7 @@ class FBAPipeline:
         if self.target_reaction:
             model.objective = self.target_reaction
 
-        # TODO: add min/max checkbox. assume def
+        # TODO: add min/max checkbox.
 
         if self.is_pfba:
             from cobra.flux_analysis import pfba

@@ -42,6 +42,11 @@ parameters :
         short-hint : |
             Check this box to minize the sum of all fluxes *after* the primary objective function has been optimized.
 
+    all_reversible :
+        ui-name : |
+            Make all reactions reverible?
+        short-hint : |
+            Check this box to make all reactions in the model reversible.
 
     max_c_uptake :
         ui-name : |

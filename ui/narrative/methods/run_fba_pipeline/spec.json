@@ -212,6 +212,32 @@
          "id" : "all_reversible"
       },
       {
+         "id" : "fraction_of_optimum_pfba",
+         "default_values" : ["1.0"],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : false,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
+         }
+      },
+      {
+         "id" : "fraction_of_optimum_fva",
+         "default_values" : ["0.1"],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : false,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
+         }
+      },
+      {
          "id" : "feature_ko_list",
          "field_type" : "textsubdata",
          "allow_multiple" : false,
@@ -426,6 +452,14 @@
             {
                "input_parameter" : "all_reversible",
                "target_property" : "all_reversible"
+            },
+            {
+               "input_parameter" : "fraction_of_optimum_pfba",
+               "target_property" : "fraction_of_optimum_pfba"
+            },
+            {
+               "input_parameter" : "fraction_of_optimum_fva",
+               "target_property" : "fraction_of_optimum_fva"
             },
             {
                "target_property" : "feature_ko_list",

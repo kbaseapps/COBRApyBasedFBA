@@ -43,7 +43,7 @@ parameters :
 
     all_reversible :
         ui-name : |
-            Make all reactions reverible?
+            Make all reactions reversible?
         short-hint : |
             Check this box to make all reactions in the model reversible.
 
@@ -64,6 +64,18 @@ parameters :
             Run loopless FVA?
         short-hint : |
             Check this box to run loopless FVA with the CycleFreeFlux algorithm.
+
+    fraction_of_optimum_pfba :
+        ui-name : |
+            Fraction of optimum for minimizing flux
+        short-hint : |
+            Sets fraction of optimum for *Minimize Flux* i.e. parsimonious FBA. Value must be between 0 and 1, defaults to 1.
+
+    fraction_of_optimum_fva :
+        ui-name : |
+            Fraction of optimum for FVA
+        short-hint : |
+            Sets fraction of optimum for *Flux Variability Analysis*. Value must be between 0 and 1, defaults to 0.1.
 
     max_c_uptake :
         ui-name : |

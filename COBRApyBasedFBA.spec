@@ -67,6 +67,9 @@ module COBRApyBasedFBA {
         bool loopless_fva;
         bool simulate_ko;
         bool all_reversible;
+
+        float fraction_of_optimum_pfba;
+        float fraction_of_optimum_fva;
         
         list<feature_id> feature_ko_list;
         list<reaction_id> reaction_ko_list;

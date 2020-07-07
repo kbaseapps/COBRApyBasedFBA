@@ -15,7 +15,8 @@ class FBAPipeline:
         self.is_loopless_fba = False
         self.is_loopless_fva = False
         self.fva_processes = None
-        self.fraction_of_optimum = 1.0
+        self.fraction_of_optimum_pfba = 1.0
+        self.fraction_of_optimum_fva = 0.1
         self.media_supplement_list = []
         self.feature_ko_list = [] # This knocks out genes (which could knockout reactions)
         self.reaction_ko_list = [] # This knocks out reactions
@@ -35,7 +36,8 @@ class FBAPipeline:
         p.is_all_reversible = params['all_reversible']
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
-        #p.fraction_of_optimum = params['objective_fraction'] # TODO: not in UI
+        p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
+        p.fraction_of_optimum_fva = params['fraction_of_optimum_fva']
 
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
@@ -124,11 +126,6 @@ class FBAPipeline:
 
         # TODO: Look at compounds and check the formula in cobra model. name of field is formula
 
-        # TODO: remove. for debuging
-        print('loopless_fba: ', self.is_loopless_fba)
-        print('loopless_fva: ', self.is_loopless_fva)
-
-
         # Set objective
         if self.target_reaction:
             model.objective = self.target_reaction
@@ -140,7 +137,7 @@ class FBAPipeline:
         if self.is_pfba:
             from cobra.flux_analysis import pfba
             fba_sol = pfba(model,
-                           fraction_of_optimum=self.fraction_of_optimum)
+                           fraction_of_optimum=self.fraction_of_optimum_pfba)
         elif self.is_loopless_fba:
             # Run CycleFreeFlux algorithm
             fba_sol = cobra.flux_analysis.loopless_solution(model)
@@ -154,7 +151,7 @@ class FBAPipeline:
             fva_sol = fva(model,
                           processes=self.fva_processes,
                           loopless=self.is_loopless_fva,
-                          fraction_of_optimum=self.fraction_of_optimum)
+                          fraction_of_optimum=self.fraction_of_optimum_fva)
         
         # If specified, simulate all single gene knockouts
         essential_genes = set()

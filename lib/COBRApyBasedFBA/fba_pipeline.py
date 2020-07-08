@@ -5,55 +5,99 @@ from cobrakbase.core.kbase_fba_builder import KBaseFBABuilder
 
 class FBAPipeline:
 
+    # Bound for making reactions reversible
     MAX_BOUND = 1000
     
     def __init__(self):
-        self.is_run_fva = False # run fva
-        self.is_all_reversible = False # all_reversible
-        self.is_pfba = False # minimize_flux
-        self.is_single_ko = False #s imulate_ko
+        # If true, run FVA algorithm on model.
+        self.is_run_fva = False
+
+        # If true, make all reactions in model reversible.
+        self.is_all_reversible = False
+
+        # If true, run pFBA to compute FBA solution.
+        self.is_pfba = False
+
+        # If true, run gene knockout algorithm on each gene
+        # to determine the set of the essential genes.
+        self.is_single_ko = False
+
+        # If true, run loopless FBA with CycleFreeFlux
+        # algorithm inplace of regular FBA. Will not run
+        # when is_pfba is true.
         self.is_loopless_fba = False
+
+        # If true, run loopless FVA with CycleFreeFlux.
         self.is_loopless_fva = False
+
+        # If true, the objective will be minimized.
+        # Otherwise the objective is maximized.
+        self.is_minimize_objective = False
+
+        # For pFBA, Must be <= 1.0. Requires that the objective value
+        # is at least the fraction times maximum objective value.
         self.fraction_of_optimum_pfba = 1.0
+
+        # For FVA, Must be <= 1.0. Requires that the objective value
+        # is at least the fraction times maximum objective value.
         self.fraction_of_optimum_fva = 0.1
-        self.media_supplement_list = []
-        self.feature_ko_list = [] # This knocks out genes (which could knockout reactions)
-        self.reaction_ko_list = [] # This knocks out reactions
-        self.custom_bound_list = []
-        self.target_reaction = ''
+
+        # Specify optimization solver, options: [coinor_cbc, glpk].
         self.solver = 'coinor_cbc'
-        self.output_id = '' # id of the returning FBA object
+
+        # Specify objective reaction to optimize.
+        self.target_reaction = ''
+
+        # Knocks out specified genes (which could knockout reactions)
+        self.feature_ko_list = []
+
+        # Knockout specified reactions.
+        self.reaction_ko_list = []
+
+        # TODO: write comment
+        self.custom_bound_list = []
+
+        # TODO: write comment
+        self.media_supplement_list = []
+
+        # Kbase ID of the returning FBA object.
+        self.output_id = ''
+
+        # Kbase workspace name where FBA app is run.
         self.workspace = ''
-        self.minimize_objective = False # togles max and min of objective
+
+        # NOTE: boolean variables are passed in as ints
+        #       with 0,1 value during runtime.
 
     @staticmethod
     def fromKBaseParams(params):
         p = FBAPipeline()
 
-        # Configure method from params
+        # Kbase environment params
+        p.output_id = params['fba_output_id']
+        p.workspace = params['fbamodel_workspace']
+
+        # Optimization and algorithmic params
+        p.solver = params['solver']
         p.is_run_fva = params['fva']
-        p.is_all_reversible = params['all_reversible']
         p.is_pfba = params['minimize_flux']
         p.is_single_ko = params['simulate_ko']
-        p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
+        p.is_loopless_fba = params['loopless_fba']
+        p.is_loopless_fva = params['loopless_fva']
+        p.target_reaction = params['target_reaction']
+        p.is_all_reversible = params['all_reversible']
+        p.is_minimize_objective = params['minimize_objective']
         p.fraction_of_optimum_fva = params['fraction_of_optimum_fva']
+        p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
 
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
             p.media_supplement_list = params['media_supplement_list'].split(',')
-        if params['feature_ko_list']:
-            p.feature_ko_list = params['feature_ko_list'].split(',')
         if params['reaction_ko_list']:
             p.reaction_ko_list = params['reaction_ko_list'].split(',')
-
+        if params['feature_ko_list']:
+            p.feature_ko_list = params['feature_ko_list'].split(',')
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
-        p.target_reaction = params['target_reaction']
-        p.solver = params['solver']
-        p.workspace = params['fbamodel_workspace']
-        p.minimize_objective = params['minimize_objective']
-        p.is_loopless_fba = params['loopless_fba']
-        p.is_loopless_fva = params['loopless_fva']
-        p.output_id = params['fba_output_id']
 
         return p
 
@@ -62,8 +106,6 @@ class FBAPipeline:
 
         # Select optimization solver
         model.solver = self.solver
-        # TODO: remove, for debugging
-        print('SOLVER: ', self.solver)
         if self.solver == 'coinor_cbc':
             # Use all available processors
             model.solver.configuration.threads = -1
@@ -84,7 +126,7 @@ class FBAPipeline:
         # Filter out user specified genes to ko that are not in model.
         self.feature_ko_list = list(filter(lambda gene: gene in model.genes,
                                            self.feature_ko_list))
-        # Knockouts
+        # Knockout specified genes
         if self.feature_ko_list:
             cobra.manipulation.delete_model_genes(model, self.feature_ko_list)
 
@@ -131,9 +173,10 @@ class FBAPipeline:
             model.objective = self.target_reaction
 
         # Set direction of the objective function, maximize by default.
-        if self.minimize_objective:
+        if self.is_minimize_objective:
             model.objective.direction = 'min'
 
+        # Compute FBA solution
         if self.is_pfba:
             from cobra.flux_analysis import pfba
             fba_sol = pfba(model,
@@ -145,6 +188,7 @@ class FBAPipeline:
             # Run vanilla FBA
             fba_sol = model.optimize()
 
+        # If specified, compute FVA solution
         fva_sol = None
         if self.is_run_fva:
             from cobra.flux_analysis import flux_variability_analysis as fva
@@ -158,6 +202,7 @@ class FBAPipeline:
             essential_genes = cobra.flux_analysis.variability. \
                               find_essential_genes(model, threshold=1e-11)
 
+        # Convert COBRApy model to kbase format
         fba_builder = KBaseFBABuilder.fromCobra(self.output_id,
                                                 model,
                                                 fba_sol,
@@ -176,18 +221,16 @@ if __name__ == '__main__':
         'fbamodel_workspace':    'chenry:narrative_1574200759205',
         'media_id':              'RichDefinedAnaerobic.media2',
         'media_workspace':       'chenry:narrative_1574200759205',
-        'target_reaction':       '',  # TODO: What is this? of type "reaction_id" (A string representing a reaction id.)
-                                        #       objective function to optimize
-        'fba_output_id':         None,  # TODO: What is this? of type "fba_id" (A string representing a FBA id.)
-                                        # Name of object we are going to save (to put back in workspace)
+        'target_reaction':       '',
+        'fba_output_id':         None,
         'workspace':             'chenry:narrative_1574200759205',
         'fva':                   False,
-        'minimize_flux':         False, # pfba
+        'minimize_flux':         False,
         'simulate_ko':           False,
         'all_reversible':        False,
-        'feature_ko_list':       [], #['L192589', 'L182555'],     # TODO: what is a feature?
+        'feature_ko_list':       [], #['L192589', 'L182555'],
         'reaction_ko_list':      [], #['rxn05625_c0', 'rxn00545_c0'],
-        'media_supplement_list': [],     # list of compound id's
+        'media_supplement_list': [],
         'objective_fraction':    1.,
         'max_c_uptake':          0.,
         'max_n_uptake':          0.,

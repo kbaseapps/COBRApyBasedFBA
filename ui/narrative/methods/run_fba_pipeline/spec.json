@@ -78,6 +78,28 @@
       },
       {
          "default_values" : [
+            "coinor_cbc"
+         ],
+         "advanced" : true,
+         "id" : "solver",
+         "optional" : false,
+         "allow_multiple" : false,
+         "field_type" : "dropdown",
+         "dropdown_options":{
+            "options": [
+               {
+                 "value": "coinor_cbc",
+                 "display": "COINOR-CBC"
+               },
+               {
+                 "value": "glpk",
+                 "display": "GLPK"
+               }
+            ]
+         }
+      },
+      {
+         "default_values" : [
             ""
          ],
          "advanced" : false,
@@ -424,6 +446,10 @@
             {
                "input_parameter" : "fba_output_id",
                "target_property" : "fba_output_id"
+            },
+            {
+               "input_parameter" : "solver",
+               "target_property" : "solver"
             },
             {
                "input_parameter" : "minimize_objective",

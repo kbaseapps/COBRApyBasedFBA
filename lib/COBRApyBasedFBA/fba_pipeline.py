@@ -14,7 +14,6 @@ class FBAPipeline:
         self.is_single_ko = False #s imulate_ko
         self.is_loopless_fba = False
         self.is_loopless_fva = False
-        self.fva_processes = None
         self.fraction_of_optimum_pfba = 1.0
         self.fraction_of_optimum_fva = 0.1
         self.media_supplement_list = []
@@ -49,12 +48,11 @@ class FBAPipeline:
 
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
         p.target_reaction = params['target_reaction']
-        p.solver = 'coinor_cbc' # params['solver'] # TODO: add to UI
+        p.solver = params['solver']
         p.workspace = params['fbamodel_workspace']
         p.minimize_objective = params['minimize_objective']
         p.is_loopless_fba = params['loopless_fba']
         p.is_loopless_fva = params['loopless_fva']
-        p.fva_processes = None # TODO: add to UI or assign max amount
         p.output_id = params['fba_output_id']
 
         return p
@@ -64,6 +62,8 @@ class FBAPipeline:
 
         # Select optimization solver
         model.solver = self.solver
+        # TODO: remove, for debugging
+        print('SOLVER: ', self.solver)
         if self.solver == 'coinor_cbc':
             # Use all available processors
             model.solver.configuration.threads = -1
@@ -149,7 +149,6 @@ class FBAPipeline:
         if self.is_run_fva:
             from cobra.flux_analysis import flux_variability_analysis as fva
             fva_sol = fva(model,
-                          processes=self.fva_processes,
                           loopless=self.is_loopless_fva,
                           fraction_of_optimum=self.fraction_of_optimum_fva)
         

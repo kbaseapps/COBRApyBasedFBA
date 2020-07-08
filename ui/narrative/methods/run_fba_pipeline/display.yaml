@@ -35,6 +35,12 @@ parameters :
         placeholder : |
             Model for FBA
 
+    solver :
+        ui-name : |
+            Backend optimization solver
+        short-hint : |
+            Select optimization solver to use. The open source solvers [GLPK, COINOR-CBC] are available.
+
     minimize_flux :
         ui-name : |
             Minimize Flux?

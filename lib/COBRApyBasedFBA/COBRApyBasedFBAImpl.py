@@ -29,7 +29,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "17bb500e7e01b987af5901dfe81a1ae5f6b8f51a"
+    GIT_COMMIT_HASH = "fc95a9b732d93775b4afb4ef4f80952c2bdfd8c3"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -64,24 +64,25 @@ class COBRApyBasedFBA:
            reaction id.), parameter "fba_output_id" of type "fba_id" (A
            string representing a FBA id.), parameter "workspace" of type
            "workspace_name" (A string representing a workspace name.),
-           parameter "minimize_objective" of type "bool" (A binary boolean),
-           parameter "fva" of type "bool" (A binary boolean), parameter
-           "minimize_flux" of type "bool" (A binary boolean), parameter
-           "loopless_fba" of type "bool" (A binary boolean), parameter
-           "loopless_fva" of type "bool" (A binary boolean), parameter
-           "simulate_ko" of type "bool" (A binary boolean), parameter
-           "all_reversible" of type "bool" (A binary boolean), parameter
-           "fraction_of_optimum_pfba" of Double, parameter
-           "fraction_of_optimum_fva" of Double, parameter "feature_ko_list"
-           of list of type "feature_id" (A string representing a feature
-           id.), parameter "reaction_ko_list" of list of type "reaction_id"
-           (A string representing a reaction id.), parameter
-           "media_supplement_list" of list of type "compound_id" (A string
-           representing a compound id.), parameter "objective_fraction" of
-           Double, parameter "max_c_uptake" of Double, parameter
-           "max_n_uptake" of Double, parameter "max_p_uptake" of Double,
-           parameter "max_s_uptake" of Double, parameter "max_o_uptake" of
-           Double, parameter "default_max_uptake" of Double
+           parameter "solver" of String, parameter "minimize_objective" of
+           type "bool" (A binary boolean), parameter "fva" of type "bool" (A
+           binary boolean), parameter "minimize_flux" of type "bool" (A
+           binary boolean), parameter "loopless_fba" of type "bool" (A binary
+           boolean), parameter "loopless_fva" of type "bool" (A binary
+           boolean), parameter "simulate_ko" of type "bool" (A binary
+           boolean), parameter "all_reversible" of type "bool" (A binary
+           boolean), parameter "fraction_of_optimum_pfba" of Double,
+           parameter "fraction_of_optimum_fva" of Double, parameter
+           "feature_ko_list" of list of type "feature_id" (A string
+           representing a feature id.), parameter "reaction_ko_list" of list
+           of type "reaction_id" (A string representing a reaction id.),
+           parameter "media_supplement_list" of list of type "compound_id" (A
+           string representing a compound id.), parameter
+           "objective_fraction" of Double, parameter "max_c_uptake" of
+           Double, parameter "max_n_uptake" of Double, parameter
+           "max_p_uptake" of Double, parameter "max_s_uptake" of Double,
+           parameter "max_o_uptake" of Double, parameter "default_max_uptake"
+           of Double
         :returns: instance of type "RunFBAPipelineResults" -> structure:
            parameter "new_fba_ref" of type "ws_fba_id" (The workspace ID for
            a FBA data object. @id ws KBaseFBA.FBA), parameter "objective" of

@@ -59,6 +59,7 @@ module COBRApyBasedFBA {
         reaction_id target_reaction;
         fba_id fba_output_id;
         workspace_name workspace;
+        string solver;
         
         bool minimize_objective;
         bool fva;

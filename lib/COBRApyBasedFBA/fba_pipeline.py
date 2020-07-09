@@ -1,12 +1,16 @@
 import math
 import cobra
 import cobrakbase
+from cobrakbase.modelseed.utils import atom_count
 from cobrakbase.core.kbase_fba_builder import KBaseFBABuilder
 
 class FBAPipeline:
 
     # Bound for making reactions reversible
     MAX_BOUND = 1000
+
+    # Tuple of uptake atoms
+    UPTAKE_ATOMS = ('C', 'N', 'P', 'S', 'O')
     
     def __init__(self):
         # If true, run FVA algorithm on model.
@@ -49,11 +53,7 @@ class FBAPipeline:
         self.target_reaction = ''
 
         # Max uptakes for exchange reactions
-        self.max_c_uptake = 0.
-        self.max_n_uptake = 0.
-        self.max_p_uptake = 0.
-        self.max_s_uptake = 0.
-        self.max_o_uptake = 0.
+        self.max_uptakes = {atom: 0. for atom in self.UPTAKE_ATOMS}
 
         # Used with complete media. Default is 0, if complete media
         # change from 0 to 100. Otherwise if user specifies
@@ -104,11 +104,11 @@ class FBAPipeline:
         p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
 
         # Uptakes
-        p.max_c_uptake = params['max_c_uptake']
-        p.max_n_uptake = params['max_n_uptake']
-        p.max_p_uptake = params['max_p_uptake']
-        p.max_s_uptake = params['max_s_uptake']
-        p.max_o_uptake = params['max_o_uptake']
+        p.max_uptakes['C'] = params['max_c_uptake']
+        p.max_uptakes['N'] = params['max_n_uptake']
+        p.max_uptakes['P'] = params['max_p_uptake']
+        p.max_uptakes['S'] = params['max_s_uptake']
+        p.max_uptakes['O'] = params['max_o_uptake']
         p.default_max_uptake = params['default_max_uptake']
 
         # Check if list params contain data. If so parse, else use default []
@@ -119,6 +119,7 @@ class FBAPipeline:
         if params['feature_ko_list']:
             p.feature_ko_list = params['feature_ko_list'].split(',')
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
+        # TODO: model editor example tuple bounds input
 
         return p
 
@@ -133,19 +134,32 @@ class FBAPipeline:
             for ex_flux in model.medium:
                 model.reactions.get_by_id(ex_flux).lower_bound = -1 * self.default_max_uptake
 
-        # for ex_flux in model.medium:
-        #     model.reactions
+        constrs = {atom: 0. for atom in self.UPTAKE_ATOMS}
 
+        for rct_id in model.medium:
 
-        # for c in model.compounds:
-        #     if c in uptakes:
-        #         # model.media gives compounds for uptakes
-        #         c.formula
-        #     TODO: check total_carbon sum(exchangeflux * carbon coefficient).
-        #           add constr: total_carbon < max_c_uptake
+            ex_rct = model.reactions.get_by_id(rct_id)
+            compound = list(ex_rct.metabolites)[0]
+            cmp_atoms = atom_count(compound.formula)
+
+            for atom in self.UPTAKE_ATOMS:
+                atom_occurences = cmp_atoms.get(atom)
+                if atom_occurences:
+                    constrs[atom] += ex_rct.flux_expression * atom_occurences
+
+        # TODO: Have discussion about how to set lb for complete media or if the
+        #       compound is in a media formulation
+        for atom in self.UPTAKE_ATOMS:
+            model.add_cons_vars(
+                model.problem.Constraint(constrs[atom],
+                                         lb=0,
+                                         ub=self.max_uptakes[atom]))
 
     def run(self, model, media):
         """This function mutates model."""
+
+        # TODO: is there a particular order we must do these steps in?
+        #       e.g. should we set all reactions reversible as the last step?
 
         # Select optimization solver
         model.solver = self.solver
@@ -155,10 +169,9 @@ class FBAPipeline:
 
         # Add custom bounds to reactions
         for rct_id, lb, ub in self.custom_bound_list:
-            # TODO: should we check if rct_id is in the reactions?
-            #       depends on interface is it plain text? then yes
-            rct = model.reactions.get_by_id(rct_id)
-            rct.lower_bound, rct.upper_bound = lb, ub
+            if rct_id in model.reactions:
+                rct = model.reactions.get_by_id(rct_id)
+                rct.lower_bound, rct.upper_bound = lb, ub
 
         # If specified, make all reactions reversible
         if self.is_all_reversible:
@@ -174,19 +187,16 @@ class FBAPipeline:
             cobra.manipulation.delete_model_genes(model, self.feature_ko_list)
 
         for rct_id in self.reaction_ko_list:
-            # TODO: should we check if rct_id is in the reactions?
-            #       depends on interface is it plain text? then yes
-            rct = model.reactions.get_by_id(rct_id)
-            rct.lower_bound, rct.upper_bound = 0, 0
+            if rct_id in model.reactions:
+                rct = model.reactions.get_by_id(rct_id)
+                rct.lower_bound, rct.upper_bound = 0, 0
 
 
         # Update exchange reaction variable bounds based on user
-        # specified max uptakes.
+        # specified max uptakes. Add max uptake contraints.
         self.configure_media(model, media)
 
         # TODO: handle media_supplement_list
-
-        # TODO: Look at compounds and check the formula in cobra model. name of field is formula
 
         # Set objective
         if self.target_reaction:

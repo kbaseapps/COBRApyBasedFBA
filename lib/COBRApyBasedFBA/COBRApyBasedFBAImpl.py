@@ -135,12 +135,12 @@ class COBRApyBasedFBA:
                                  'description': 'FBA'}],
             'text_message': 'TODO: print FBA solution, etc'
         }
-        print("callback_url: ", self.callback_url)
+
         report = KBaseReport(self.callback_url)
         # TODO: create_extended_report function
         report_info = report.create({'report': reportObj, 'workspace_name': params['workspace']})
 
-        # STEP 6: contruct the output to send back
+        # Contruct the output to send back
         results = {'report_name': report_info['name'],
                    'report_ref': report_info['ref'],
                    'workspace_name': params['workspace'],

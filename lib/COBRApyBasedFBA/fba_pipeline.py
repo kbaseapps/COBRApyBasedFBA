@@ -48,6 +48,19 @@ class FBAPipeline:
         # Specify objective reaction to optimize.
         self.target_reaction = ''
 
+        # Max uptakes for exchange reactions
+        self.max_c_uptake = 0.
+        self.max_n_uptake = 0.
+        self.max_p_uptake = 0.
+        self.max_s_uptake = 0.
+        self.max_o_uptake = 0.
+
+        # Used with complete media. Default is 0, if complete media
+        # change from 0 to 100. Otherwise if user specifies
+        # default_max_uptake != 0, every exchange flux has a lower
+        # bound of negative default_max_uptake.
+        self.default_max_uptake = 0.
+
         # Knocks out specified genes (which could knockout reactions)
         self.feature_ko_list = []
 
@@ -90,6 +103,14 @@ class FBAPipeline:
         p.fraction_of_optimum_fva = params['fraction_of_optimum_fva']
         p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
 
+        # Uptakes
+        p.max_c_uptake = params['max_c_uptake']
+        p.max_n_uptake = params['max_n_uptake']
+        p.max_p_uptake = params['max_p_uptake']
+        p.max_s_uptake = params['max_s_uptake']
+        p.max_o_uptake = params['max_o_uptake']
+        p.default_max_uptake = params['default_max_uptake']
+
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
             p.media_supplement_list = params['media_supplement_list'].split(',')
@@ -100,6 +121,28 @@ class FBAPipeline:
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
 
         return p
+
+    def configure_media(self, model, media):
+
+        # TODO: should we allow user specified default_max_uptake for complete media?
+        #       if so, then check if default uptake != 0
+        if media.name == 'Complete':
+            self.default_max_uptake = 100.
+
+        if not math.isclose(self.default_max_uptake, 0):
+            for ex_flux in model.medium:
+                model.reactions.get_by_id(ex_flux).lower_bound = -1 * self.default_max_uptake
+
+        # for ex_flux in model.medium:
+        #     model.reactions
+
+
+        # for c in model.compounds:
+        #     if c in uptakes:
+        #         # model.media gives compounds for uptakes
+        #         c.formula
+        #     TODO: check total_carbon sum(exchangeflux * carbon coefficient).
+        #           add constr: total_carbon < max_c_uptake
 
     def run(self, model, media):
         """This function mutates model."""
@@ -136,35 +179,12 @@ class FBAPipeline:
             rct = model.reactions.get_by_id(rct_id)
             rct.lower_bound, rct.upper_bound = 0, 0
 
-        # Set max uptakes
-        # TODO: add uptake member vars? Might have to parse smiles. This mutates the model constraints.
-        #       data structure of media: https://narrative.kbase.us/#spec/type/KBaseBiochem.Media
-        #    'max_c_uptake':          0.,
-        #    'max_n_uptake':          0.,
-        #    'max_p_uptake':          0.,
-        #    'max_s_uptake':          0.,
-        #    'max_o_uptake':          0.,
-        #    'default_max_uptake':    0.   # Used when user picks complete media. default is 0, media tells which compounds can be consumed
-        #                                     if complete media change from 0 to 100. if they have default max uptake != 0, every exchange flux
-        #                                     has a lower bound that is negative default_max_uptake.
 
-        # if media.name == 'Complete':
-        #     # assume media contains everyhting
-        #     # set defult_max_uptake to 100
-
-        # if defult_max_uptake != 0:
-        #     for exchange_flux in model: # 'EX' prefix
-        #         flux.lb = -1* default_max_uptake
-
-        # for c in model.compounds:
-        #     if c in uptakes:
-        #         # model.media gives compounds for uptakes
-        #         c.formula
-        #     TODO: check total_carbon sum(exchangeflux * carbon coefficient).
-        #           add constr: total_carbon < max_c_uptake
+        # Update exchange reaction variable bounds based on user
+        # specified max uptakes.
+        self.configure_media(model, media)
 
         # TODO: handle media_supplement_list
-
 
         # TODO: Look at compounds and check the formula in cobra model. name of field is formula
 

@@ -194,7 +194,7 @@ parameter-groups:
     ui-name: |
       Custom reaction bounds
     short-hint: |
-      Custom reaction bounds to add to model.
+      Custom reaction bounds to add to the model.
 
 icon: fba-teal.png
 

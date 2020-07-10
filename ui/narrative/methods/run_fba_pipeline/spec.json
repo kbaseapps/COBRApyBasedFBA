@@ -416,6 +416,19 @@
          "text_options" : {
             "validate_as" : "float"
          }
+      },
+      {
+         "default_values" : [
+            ""
+         ],
+         "id" : "default_max_uptake",
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float"
+         }
       }
    ],
    "job_id_output_field" : "docker",
@@ -518,6 +531,10 @@
             {
                "target_property" : "max_o_uptake",
                "input_parameter" : "max_o_uptake"
+            },
+            {
+               "target_property" : "default_max_uptake",
+               "input_parameter" : "default_max_uptake"
             }
          ],
          "output_mapping" : [

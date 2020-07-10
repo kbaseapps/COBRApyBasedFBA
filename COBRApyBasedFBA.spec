@@ -50,6 +50,12 @@ module COBRApyBasedFBA {
         @id ws KBaseReport.Report
     */
     typedef string ws_report_id;
+
+    typedef structure {
+        reaction_id custom_reaction_id;
+        float custom_lb;
+        float custom_ub;
+    } CustomBounds;
     
     typedef structure {
         fbamodel_id fbamodel_id;
@@ -75,6 +81,7 @@ module COBRApyBasedFBA {
         list<feature_id> feature_ko_list;
         list<reaction_id> reaction_ko_list;
         list<compound_id> media_supplement_list;
+        list<CustomBounds> custom_bound_list;
         
         float objective_fraction;
         

@@ -178,22 +178,29 @@ parameters :
             Option to add custom reaction bounds to reactions inside the model.
 
     custom_reaction_id :
-         ui-name : |
+        ui-name : |
             Reaction id
         short-hint : |
             Reaction id to add custom bound to.
 
     custom_lb :
-         ui-name : |
+        ui-name : |
             Lower bound
         short-hint : |
             Custom lower bound for the reaction.
 
     custom_ub :
-         ui-name : |
+        ui-name : |
             Upper bound
         short-hint : |
             Custom upper bound for the reaction.
+
+parameter-groups:
+  custom_bound_list:
+    ui-name: |
+      Custom reaction bounds
+    short-hint: |
+      Custom reaction bounds to add to model.
 
 icon: fba-teal.png
 

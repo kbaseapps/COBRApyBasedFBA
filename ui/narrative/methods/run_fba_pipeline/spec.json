@@ -338,7 +338,7 @@
          "id" : "custom_reaction_id",
          "field_type" : "textsubdata",
          "allow_multiple" : false,
-         "optional" : false,
+         "optional" : true,
          "advanced" : true,
          "default_values" : [
             ""

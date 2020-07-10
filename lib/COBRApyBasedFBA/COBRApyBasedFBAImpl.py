@@ -29,7 +29,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "fc95a9b732d93775b4afb4ef4f80952c2bdfd8c3"
+    GIT_COMMIT_HASH = "7c6d93244b1fb153bb9e63910bb5a02f5f8a512e"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -77,12 +77,15 @@ class COBRApyBasedFBA:
            representing a feature id.), parameter "reaction_ko_list" of list
            of type "reaction_id" (A string representing a reaction id.),
            parameter "media_supplement_list" of list of type "compound_id" (A
-           string representing a compound id.), parameter
-           "objective_fraction" of Double, parameter "max_c_uptake" of
-           Double, parameter "max_n_uptake" of Double, parameter
-           "max_p_uptake" of Double, parameter "max_s_uptake" of Double,
-           parameter "max_o_uptake" of Double, parameter "default_max_uptake"
-           of Double
+           string representing a compound id.), parameter "custom_bound_list"
+           of list of type "CustomBounds" -> structure: parameter
+           "custom_reaction_id" of type "reaction_id" (A string representing
+           a reaction id.), parameter "custom_lb" of Double, parameter
+           "custom_ub" of Double, parameter "objective_fraction" of Double,
+           parameter "max_c_uptake" of Double, parameter "max_n_uptake" of
+           Double, parameter "max_p_uptake" of Double, parameter
+           "max_s_uptake" of Double, parameter "max_o_uptake" of Double,
+           parameter "default_max_uptake" of Double
         :returns: instance of type "RunFBAPipelineResults" -> structure:
            parameter "new_fba_ref" of type "ws_fba_id" (The workspace ID for
            a FBA data object. @id ws KBaseFBA.FBA), parameter "objective" of

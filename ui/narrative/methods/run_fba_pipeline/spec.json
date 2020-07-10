@@ -355,7 +355,7 @@
       {
          "id" : "max_c_uptake",
          "default_values" : [
-            ""
+            "0"
          ],
          "advanced" : true,
          "field_type" : "text",
@@ -371,7 +371,7 @@
          },
          "advanced" : true,
          "default_values" : [
-            ""
+            "0"
          ],
          "id" : "max_n_uptake",
          "field_type" : "text",
@@ -386,7 +386,7 @@
          "optional" : true,
          "field_type" : "text",
          "default_values" : [
-            ""
+            "0"
          ],
          "id" : "max_p_uptake",
          "advanced" : true
@@ -397,7 +397,7 @@
          },
          "id" : "max_s_uptake",
          "default_values" : [
-            ""
+            "0"
          ],
          "advanced" : true,
          "field_type" : "text",
@@ -406,7 +406,7 @@
       },
       {
          "default_values" : [
-            ""
+            "0"
          ],
          "id" : "max_o_uptake",
          "advanced" : true,
@@ -419,7 +419,7 @@
       },
       {
          "default_values" : [
-            ""
+            "0"
          ],
          "id" : "default_max_uptake",
          "advanced" : true,

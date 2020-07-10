@@ -67,7 +67,7 @@ class FBAPipeline:
         # Knockout specified reactions.
         self.reaction_ko_list = []
 
-        # TODO: write comment
+        # Custom bounds to add to reaction in model
         self.custom_bound_list = []
 
         # TODO: write comment

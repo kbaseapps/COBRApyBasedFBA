@@ -9,6 +9,20 @@
       "input" : null,
       "output" : "kbaseTabTable"
    },
+   "parameter-groups": [
+     {
+         "id": "custom_bound_list",
+         "parameters": [
+             "custom_reaction_id",
+             "custom_lb",
+             "custom_ub",
+         ],
+         "optional": true,
+         "advanced": true,
+         "allow_multiple": true,
+         "with_border": true
+     },
+   ],
    "parameters" : [
       {
          "text_options" : {
@@ -321,6 +335,60 @@
          "field_type" : "textsubdata"
       },
       {
+         "id" : "custom_reaction_id",
+         "field_type" : "textsubdata",
+         "allow_multiple" : false,
+         "optional" : false,
+         "advanced" : true,
+         "default_values" : [
+            ""
+         ],
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "textsubdata_options" : {
+            "show_src_obj" : true,
+            "allow_custom" : true,
+            "multiselection" : false,
+            "subdata_selection" : {
+               "subdata_included" : [
+                  "modelreactions/[*]/id",
+                  "modelreactions/[*]/name"
+               ],
+               "selection_description" : [
+                  "name"
+               ],
+               "selection_id" : "id",
+               "path_to_subdata" : [
+                  "modelreactions"
+               ],
+               "parameter_id" : "fbamodel_id"
+            }
+         }
+      },
+      {
+         "id" : "custom_lb",
+         "default_values" : [""],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float"
+         }
+      },
+      {
+         "id" : "custom_ub",
+         "default_values" : [""],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float"
+         }
+      },
+      {
          "allow_multiple" : true,
          "optional" : true,
          "field_type" : "textsubdata",
@@ -507,6 +575,10 @@
             {
                "target_property" : "reaction_ko_list",
                "input_parameter" : "reaction_ko_list"
+            },
+            {
+               "target_property" : "custom_bound_list",
+               "input_parameter" : "custom_bound_list"
             },
             {
                "target_property" : "media_supplement_list",

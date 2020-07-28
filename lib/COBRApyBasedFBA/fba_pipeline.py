@@ -144,7 +144,9 @@ class FBAPipeline:
                 atom_occurences = cmp_atoms.get(atom)
                 if atom_occurences:
                     # TODO: parse reverse reaction expression only (make sure it's negative)
-                    constrs[atom] += ex_rct.flux_expression * atom_occurences
+                    constrs[atom] += ex_rct.reverse_variable * atom_occurences
+
+        print('constrs: ', constrs)
 
         for atom in self.UPTAKE_ATOMS:
             model.add_cons_vars(

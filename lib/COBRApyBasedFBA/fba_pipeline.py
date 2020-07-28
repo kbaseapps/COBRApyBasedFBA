@@ -125,8 +125,6 @@ class FBAPipeline:
 
     def configure_media(self, model, media):
 
-        # TODO: should we allow user specified default_max_uptake for complete media?
-        #       if so, then check if default uptake != 0
         if media.name == 'Complete':
             self.default_max_uptake = 100.
 
@@ -145,10 +143,9 @@ class FBAPipeline:
             for atom in self.UPTAKE_ATOMS:
                 atom_occurences = cmp_atoms.get(atom)
                 if atom_occurences:
+                    # TODO: parse reverse reaction expression only (make sure it's negative)
                     constrs[atom] += ex_rct.flux_expression * atom_occurences
 
-        # TODO: Have discussion about how to set lb for complete media or if the
-        #       compound is in a media formulation
         for atom in self.UPTAKE_ATOMS:
             model.add_cons_vars(
                 model.problem.Constraint(constrs[atom],
@@ -158,26 +155,23 @@ class FBAPipeline:
     def run(self, model, media):
         """This function mutates model."""
 
-        # TODO: is there a particular order we must do these steps in?
-        #       e.g. should we set all reactions reversible as the last step?
-
         # Select optimization solver
         model.solver = self.solver
         if self.solver == 'coinor_cbc':
             # Use all available processors
             model.solver.configuration.threads = -1
 
-        # Add custom bounds to reactions
-        for rct_id, lb, ub in self.custom_bound_list:
-            if rct_id in model.reactions:
-                rct = model.reactions.get_by_id(rct_id)
-                rct.lower_bound, rct.upper_bound = lb, ub
-
         # If specified, make all reactions reversible
         if self.is_all_reversible:
             for rct in model.reactions:
                 rct.upper_bound = self.MAX_BOUND
                 rct.lower_bound = self.MAX_BOUND * -1
+
+        # Add custom bounds to reactions
+        for rct_id, lb, ub in self.custom_bound_list:
+            if rct_id in model.reactions:
+                rct = model.reactions.get_by_id(rct_id)
+                rct.lower_bound, rct.upper_bound = lb, ub
 
         # Filter out user specified genes to ko that are not in model.
         self.feature_ko_list = list(filter(lambda gene: gene in model.genes,
@@ -191,12 +185,9 @@ class FBAPipeline:
                 rct = model.reactions.get_by_id(rct_id)
                 rct.lower_bound, rct.upper_bound = 0, 0
 
-
         # Update exchange reaction variable bounds based on user
         # specified max uptakes. Add max uptake contraints.
         self.configure_media(model, media)
-
-        # TODO: handle media_supplement_list
 
         # Set objective
         if self.target_reaction:

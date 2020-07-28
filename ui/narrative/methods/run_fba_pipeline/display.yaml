@@ -190,11 +190,11 @@ parameters :
             Custom upper bound for the reaction.
 
 parameter-groups:
-  custom_bound_list:
-    ui-name: |
-      Custom reaction bounds
-    short-hint: |
-      Custom reaction bounds to add to the model.
+    custom_bound_list:
+        ui-name: |
+            Custom reaction bounds
+        short-hint: |
+            Custom reaction bounds to add to the model.
 
 icon: fba-teal.png
 

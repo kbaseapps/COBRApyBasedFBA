@@ -347,8 +347,8 @@
             "valid_ws_types" : []
          },
          "textsubdata_options" : {
-            "show_src_obj" : true,
-            "allow_custom" : true,
+            "show_src_obj" : false,
+            "allow_custom" : false,
             "multiselection" : false,
             "subdata_selection" : {
                "subdata_included" : [

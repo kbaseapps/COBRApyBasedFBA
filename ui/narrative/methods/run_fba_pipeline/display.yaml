@@ -171,6 +171,13 @@ parameters :
         short-hint : |
             Every exchange flux has a lower bound of negative *Default max uptake*. If complete media, default is 100. Otherwise default is 0.
 
+parameter-groups:
+  custom_bound_list:
+    ui-name: |
+      Custom reaction bounds
+    short-hint: |
+      Custom reaction bounds to add to the model.
+
     custom_reaction_id :
         ui-name : |
             Reaction id
@@ -188,13 +195,6 @@ parameters :
             Upper bound
         short-hint : |
             Custom upper bound for the reaction.
-
-parameter-groups:
-  custom_bound_list:
-    ui-name: |
-      Custom reaction bounds
-    short-hint: |
-      Custom reaction bounds to add to the model.
 
 icon: fba-teal.png
 

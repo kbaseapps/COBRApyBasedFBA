@@ -118,6 +118,7 @@ class FBAPipeline:
             p.reaction_ko_list = params['reaction_ko_list'].split(',')
         if params['feature_ko_list']:
             p.feature_ko_list = params['feature_ko_list'].split(',')
+        # TODO: current format [{'custom_reaction_id': ['rct1'], 'custom_lb': float, 'custom_ub': float}]
         p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
         # TODO: model editor example tuple bounds input
 
@@ -143,10 +144,7 @@ class FBAPipeline:
             for atom in self.UPTAKE_ATOMS:
                 atom_occurences = cmp_atoms.get(atom)
                 if atom_occurences:
-                    # TODO: parse reverse reaction expression only (make sure it's negative)
                     constrs[atom] += ex_rct.reverse_variable * atom_occurences
-
-        print('constrs: ', constrs)
 
         for atom in self.UPTAKE_ATOMS:
             model.add_cons_vars(

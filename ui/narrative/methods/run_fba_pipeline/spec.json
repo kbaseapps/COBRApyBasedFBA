@@ -340,9 +340,7 @@
          "allow_multiple" : false,
          "optional" : true,
          "advanced" : true,
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "text_options" : {
             "valid_ws_types" : []
          },

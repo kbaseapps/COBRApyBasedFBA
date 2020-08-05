@@ -247,15 +247,15 @@ def build_report(pipeline, fba_object, fva_sol, fba_sol):
     fba_type = 'pFBA' if pipeline.is_pfba else 'FBA'
 
     # Seperate exchange reaction ids
-    ex_rcts = fva_sol.loc[sol.index.str[:2] == 'EX'].index
-    rcts = fva_sol.loc[sol.index.str[:2] != 'EX'].index
+    ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
+    rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
 
     atp_summary = []
     df = fba_object.model.metabolites.atp_c.summary().to_frame()
     for index, row in zip(df.index, df.itertuples()):
         atp_summary.append([*index, *row[1:]])
 
-    context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
+    context = {'summary':     [x[1:] for x in fba_object.model.summary().to_frame().itertuples()],
                'atp_summary': atp_summary,
                'overview':    [{'name': 'Model',                'value': fba_model},
                                {'name': 'Media',                'value': media},

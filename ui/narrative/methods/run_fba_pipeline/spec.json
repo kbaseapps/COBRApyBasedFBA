@@ -18,7 +18,7 @@
              "custom_ub"
          ],
          "optional": true,
-         "advanced": true,
+         "advanced": false,
          "allow_multiple": true,
          "with_border": true
      }
@@ -339,7 +339,7 @@
          "field_type" : "textsubdata",
          "allow_multiple" : false,
          "optional" : true,
-         "advanced" : true,
+         "advanced" : false,
          "default_values" : [""],
          "text_options" : {
             "valid_ws_types" : []
@@ -367,7 +367,7 @@
       {
          "id" : "custom_lb",
          "default_values" : [""],
-         "advanced" : true,
+         "advanced" : false,
          "field_type" : "text",
          "allow_multiple" : false,
          "optional" : true,
@@ -378,7 +378,7 @@
       {
          "id" : "custom_ub",
          "default_values" : [""],
-         "advanced" : true,
+         "advanced" : false,
          "field_type" : "text",
          "allow_multiple" : false,
          "optional" : true,

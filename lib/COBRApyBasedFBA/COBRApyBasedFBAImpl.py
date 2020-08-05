@@ -141,7 +141,7 @@ class COBRApyBasedFBA:
             'text_message': 'TODO: print FBA solution, etc',
             # 'html_links': 'COBRApyBasedFBAl/lib/COBRApyBasedFBA/index.html',
             # 'direct_html_link_index': 0,
-            'direct_html': build_report(pipeline, result, fva_sol, fba_sol),
+            'direct_html': build_report(pipeline, model, fva_sol, fba_sol),
             'html_window_height': 333,
         }
 

@@ -235,7 +235,7 @@ class FBAPipeline:
 
 
 # TODO: see above TODOs, fva_sol, fba_sol should be part of fba_object
-def build_report(pipeline, fba_object, fva_sol, fba_sol):
+def build_report(pipeline, model, fva_sol, fba_sol):
     """Build output report and return string of html."""
     import os
     import jinja2
@@ -251,19 +251,24 @@ def build_report(pipeline, fba_object, fva_sol, fba_sol):
     rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
 
     atp_summary = []
-    df = fba_object.model.metabolites.atp_c.summary().to_frame()
+    df = model.metabolites.atp_c.summary().to_frame()
     for index, row in zip(df.index, df.itertuples()):
         atp_summary.append([*index, *row[1:]])
+
+
+    # TODO: add correct vals
+    fba_model = 'FBA_MODEL'
+    media = 'MEDIA'
 
     context = {'summary':     [x[1:] for x in fba_object.model.summary().to_frame().itertuples()],
                'atp_summary': atp_summary,
                'overview':    [{'name': 'Model',                'value': fba_model},
                                {'name': 'Media',                'value': media},
                                {'name': 'Optimization status',  'value': fba_sol.status},
-                               {'name': 'Objective',            'value': fba_object.model.objective},
+                               {'name': 'Objective',            'value': model.objective},
                                {'name': 'Objective value',      'value': fba_sol.objective_value},
                                {'name': 'Number of reactions',  'value': len(sol)},
-                               {'name': 'Number of compounds',  'value': len(fba_object.model.metabolites)},
+                               {'name': 'Number of compounds',  'value': len(model.metabolites)},
                                {'name': 'FBA type',             'value': fba_type},
                                {'name': 'Loopless FBA',         'value': yes_no_format(pipeline.is_loopless_fba)},
                                {'name': 'Loopless FVA',         'value': yes_no_format(pipeline.is_loopless_fva)},
@@ -281,13 +286,13 @@ def build_report(pipeline, fba_object, fva_sol, fba_sol):
                                          'max_flux': fva_sol.maximum[rct_id],
                                          'equation': rct.reaction,
                                          'name': nan_format(rct.name)}
-                                       for rct_id, rct in zip(rcts, map(fba_object.model.reactions.get_by_id, rcts))]),
+                                       for rct_id, rct in zip(rcts, map(model.reactions.get_by_id, rcts))]),
                'ex_reactions': json.dumps([{'id': rct_id,
                                             'min_flux': fva_sol.minimum[rct_id],
                                             'max_flux': fva_sol.maximum[rct_id],
                                             'equation': rct.reaction,
                                             'name': nan_format(rct.name)}
-                                          for rct_id, rct in zip(ex_rcts, map(fba_object.model.reactions.get_by_id, ex_rcts))]),
+                                          for rct_id, rct in zip(ex_rcts, map(model.reactions.get_by_id, ex_rcts))]),
            }
 
     template_dir = os.path.dirname(os.path.realpath(__file__))

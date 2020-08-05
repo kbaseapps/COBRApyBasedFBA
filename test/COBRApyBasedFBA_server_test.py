@@ -104,7 +104,7 @@ class COBRApyBasedFBATest(unittest.TestCase):
             'fba_output_id':         'result_fba_sol',  # TODO: What is this? of type "fba_id" (A string representing a FBA id.)
                                             # Name of object we are going to save (to put back in workspace)
             'workspace':             self.wsName,
-            'fva':                   False,
+            'fva':                   True,
             'minimize_flux':         False, # pfba # TODO: these are ints 0, 1
             'simulate_ko':           False,
             'all_reversible':        False,
@@ -121,5 +121,5 @@ class COBRApyBasedFBATest(unittest.TestCase):
         }
 
         # From kbase
-        params = {'solver':'coinor_cbc', 'fraction_of_optimum_fva':0.1, 'fraction_of_optimum_pfba':1.0, 'loopless_fba':1, 'loopless_fva':1, 'minimize_objective':0, 'all_reversible':0, 'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1', 'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'FBA_test_result', 'fva': 0, 'minimize_flux': 0, 'simulate_ko': 0, 'feature_ko_list': 'b0001', 'reaction_ko_list': '', 'media_supplement_list': '', 'max_c_uptake': 0., 'max_n_uptake': 0., 'max_p_uptake': 0., 'max_s_uptake': 0., 'max_o_uptake': 0., 'default_max_uptake': 0.}
+        params = {'solver':'coinor_cbc', 'fraction_of_optimum_fva':0.1, 'fraction_of_optimum_pfba':1.0, 'loopless_fba':1, 'loopless_fva':1, 'minimize_objective':0, 'all_reversible':0, 'workspace': 'abrace05:narrative_1594056508275', 'fbamodel_id': '44773/6/1', 'media_id': '44773/2/1', 'target_reaction': 'bio1', 'fba_output_id': 'FBA_test_result', 'fva': 1, 'minimize_flux': 0, 'simulate_ko': 0, 'feature_ko_list': 'b0001', 'reaction_ko_list': '', 'media_supplement_list': '', 'max_c_uptake': 0., 'max_n_uptake': 0., 'max_p_uptake': 0., 'max_s_uptake': 0., 'max_o_uptake': 0., 'default_max_uptake': 0.}
         self.serviceImpl.run_fba_pipeline(self.ctx, params)

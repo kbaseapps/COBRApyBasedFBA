@@ -118,9 +118,10 @@ class FBAPipeline:
             p.reaction_ko_list = params['reaction_ko_list'].split(',')
         if params['feature_ko_list']:
             p.feature_ko_list = params['feature_ko_list'].split(',')
-        # TODO: current format [{'custom_reaction_id': ['rct1'], 'custom_lb': float, 'custom_ub': float}]
-        p.custom_bound_list = [] # TODO: doesn't seem to be integrated into UI
-        # TODO: model editor example tuple bounds input
+        # custom_bound_list input format [{'custom_reaction_id': ['rct1'], 'custom_lb': float, 'custom_ub': float}]
+        if params['custom_bound_list']:
+            p.custom_bound_list = [(item['custom_reaction_id'][0], item['custom_lb'], item['custom_ub'])
+                                    for item in params['custom_bound_list']]
 
         return p
 
@@ -250,6 +251,7 @@ def build_report(pipeline, model, fva_sol, fba_sol):
     ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
     rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
 
+    print(model.metabolites)
     atp_summary = []
     df = model.metabolites.atp_c.summary().to_frame()
     for index, row in zip(df.index, df.itertuples()):

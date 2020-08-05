@@ -6,9 +6,10 @@ import os
 from pprint import pformat
 
 from installed_clients.KBaseReportClient import KBaseReport
-from COBRApyBasedFBA.fba_pipeline import FBAPipeline
+from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
 import cobrakbase
+import jinja2
 #END_HEADER
 
 
@@ -128,20 +129,25 @@ class COBRApyBasedFBA:
 
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object
-        result = pipeline.run(model, media)
+        result, fva_sol, fba_sol = pipeline.run(model, media)
         # kbase_ref is list of lists with only one inner list
         kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
         # Step 5 - Build a Report and return
-        reportObj = {
+        report_params = {
             'objects_created': [{'ref': f"{params['workspace']}/{params['fba_output_id']}",
                                  'description': 'FBA'}],
-            'text_message': 'TODO: print FBA solution, etc'
+            'workspace_name': params['workspace'],
+            'text_message': 'TODO: print FBA solution, etc',
+            # 'html_links': 'COBRApyBasedFBAl/lib/COBRApyBasedFBA/index.html',
+            # 'direct_html_link_index': 0,
+            'direct_html': build_report(pipeline, result, fva_sol, fba_sol),
+            'html_window_height': 333,
         }
 
         report = KBaseReport(self.callback_url)
-        # TODO: create_extended_report function
-        report_info = report.create({'report': reportObj, 'workspace_name': params['workspace']})
+        #report_info = report.create({'report': report_params, 'workspace_name': params['workspace']})
+        report_info = report.create_extended_report(report_params)
 
         # Contruct the output to send back
         results = {'report_name': report_info['name'],

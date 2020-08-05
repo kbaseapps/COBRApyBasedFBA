@@ -229,34 +229,73 @@ class FBAPipeline:
                                                 fba_sol,
                                                 media,
                                                 self.workspace)
-
-        b = fba_builder.build()
-        # TODO: add fva_sol and essential_genes to this object in cobrakbase
-        return b
         
+        # TODO: add fva_sol and essential_genes to this object in cobrakbase
+        return fba_builder.build(), fva_sol, fba_sol # TODO: Temporary tuple return. add to fva_builder
 
-if __name__ == '__main__':
 
-    params = {
-        'fbamodel_id':           'Lactococcus_lactis_model',
-        'fbamodel_workspace':    'chenry:narrative_1574200759205',
-        'media_id':              'RichDefinedAnaerobic.media2',
-        'media_workspace':       'chenry:narrative_1574200759205',
-        'target_reaction':       '',
-        'fba_output_id':         None,
-        'workspace':             'chenry:narrative_1574200759205',
-        'fva':                   False,
-        'minimize_flux':         False,
-        'simulate_ko':           False,
-        'all_reversible':        False,
-        'feature_ko_list':       [], #['L192589', 'L182555'],
-        'reaction_ko_list':      [], #['rxn05625_c0', 'rxn00545_c0'],
-        'media_supplement_list': [],
-        'objective_fraction':    1.,
-        'max_c_uptake':          0.,
-        'max_n_uptake':          0.,
-        'max_p_uptake':          0.,
-        'max_s_uptake':          0.,
-        'max_o_uptake':          0.,
-        'default_max_uptake':    0.
-    }
+# TODO: see above TODOs, fva_sol, fba_sol should be part of fba_object
+def build_report(pipeline, fba_object, fva_sol, fba_sol):
+    """Build output report and return string of html."""
+    import os
+    import jinja2
+
+    # Helper funcs for formating
+    yes_no_format = lambda x: 'Yes' if x else 'No'
+    nan_format = lambda x: x if x else 'NaN'
+
+    fba_type = 'pFBA' if pipeline.is_pfba else 'FBA'
+
+    # Seperate exchange reaction ids
+    ex_rcts = fva_sol.loc[sol.index.str[:2] == 'EX'].index
+    rcts = fva_sol.loc[sol.index.str[:2] != 'EX'].index
+
+    atp_summary = []
+    df = fba_object.model.metabolites.atp_c.summary().to_frame()
+    for index, row in zip(df.index, df.itertuples()):
+        atp_summary.append([*index, *row[1:]])
+
+    context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
+               'atp_summary': atp_summary,
+               'overview':    [{'name': 'Model',                'value': fba_model},
+                               {'name': 'Media',                'value': media},
+                               {'name': 'Optimization status',  'value': fba_sol.status},
+                               {'name': 'Objective',            'value': fba_object.model.objective},
+                               {'name': 'Objective value',      'value': fba_sol.objective_value},
+                               {'name': 'Number of reactions',  'value': len(sol)},
+                               {'name': 'Number of compounds',  'value': len(fba_object.model.metabolites)},
+                               {'name': 'FBA type',             'value': fba_type},
+                               {'name': 'Loopless FBA',         'value': yes_no_format(pipeline.is_loopless_fba)},
+                               {'name': 'Loopless FVA',         'value': yes_no_format(pipeline.is_loopless_fva)},
+                               {'name': 'FVA fraction of opt.', 'value': pipeline.fraction_of_optimum_fva},
+                               {'name': 'Reversible reactions', 'value': yes_no_format(pipeline.is_all_reversible)},
+                               {'name': 'Single gene KO',       'value': yes_no_format(pipeline.is_single_ko)},
+                               {'name': 'Gene KO',              'value': len(pipeline.feature_ko_list)},
+                               {'name': 'Reaction KO',          'value': len(pipeline.reaction_ko_list)},
+                               {'name': 'Custom bounds',        'value': len(pipeline.custom_bound_list)},
+                               {'name': 'Media supplement',     'value': len(pipeline.media_supplement_list)},
+                               {'name': 'Solver',               'value': pipeline.solver.upper()}
+                               ],
+               'reactions': json.dumps([{'id': rct_id,
+                                         'min_flux': fva_sol.minimum[rct_id],
+                                         'max_flux': fva_sol.maximum[rct_id],
+                                         'equation': rct.reaction,
+                                         'name': nan_format(rct.name)}
+                                       for rct_id, rct in zip(rcts, map(fba_object.model.reactions.get_by_id, rcts))]),
+               'ex_reactions': json.dumps([{'id': rct_id,
+                                            'min_flux': fva_sol.minimum[rct_id],
+                                            'max_flux': fva_sol.maximum[rct_id],
+                                            'equation': rct.reaction,
+                                            'name': nan_format(rct.name)}
+                                          for rct_id, rct in zip(ex_rcts, map(fba_object.model.reactions.get_by_id, ex_rcts))]),
+           }
+
+    template_dir = os.path.dirname(os.path.realpath(__file__))
+    template_file = 'template.html'
+
+    env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(template_dir),
+            autoescape=jinja2.select_autoescape(['html', 'xml']))
+
+    # Return string of html
+    return env.get_template(template_file).render(context)

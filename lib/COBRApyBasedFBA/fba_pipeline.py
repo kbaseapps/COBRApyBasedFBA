@@ -1,6 +1,7 @@
 import math
 import cobra
 import cobrakbase
+import pandas as pd
 from cobrakbase.modelseed.utils import atom_count
 from cobrakbase.core.kbase_fba_builder import KBaseFBABuilder
 
@@ -251,9 +252,16 @@ def build_report(pipeline, model, fva_sol, fba_sol):
     ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
     rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
 
-    print(model.metabolites)
+    # Select ATP metabolite
+    if 'atp_c' in model.metabolites:
+        df = model.metabolites.atp_c.summary().to_frame()
+    elif 'cpd00002' in model.metabolites:
+        df = model.metabolites.cpd00002.summary().to_frame()
+    else:
+        # Create empty data frame to display void ATP summary
+        df = pd.DataFrame()
+
     atp_summary = []
-    df = model.metabolites.atp_c.summary().to_frame()
     for index, row in zip(df.index, df.itertuples()):
         atp_summary.append([*index, *row[1:]])
 

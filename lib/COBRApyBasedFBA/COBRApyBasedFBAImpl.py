@@ -3,6 +3,7 @@
 # The header block is where all import statments should live
 import logging
 import os
+import uuid
 from pprint import pformat
 
 from installed_clients.KBaseReportClient import KBaseReport

@@ -255,12 +255,13 @@ def build_report(pipeline, model, fva_sol, fba_sol):
 
     # Helper function to determine reaction class
     def class_setter(rct):
+        if math.isclose(fva_sol.minimum[rct], 0, rel_tol=1e-07) \
+            and math.isclose(fva_sol.maximum[rct], 0, rel_tol=1e-07):
+            return 'blocked'
         if fva_sol.minimum[rct] > 0 or fva_sol.maximum[rct] < 0:
             return 'essential'
         if fva_sol.minimum[rct] < 0 or fva_sol.maximum[rct] > 0:
             return 'functional'
-        if math.isclose(fva_sol.minimum[rct], 0) and math.isclose(fva_sol.maximum[rct], 0):
-            return 'blocked'
 
     # Compute reaction classes
     rct_classes = [class_setter(rct) for rct in rcts]

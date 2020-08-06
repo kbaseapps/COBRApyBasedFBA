@@ -6,9 +6,9 @@ import os
 from pprint import pformat
 
 from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.DataFileUtilClient import DataFileUtil
 from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
-from installed_clients.DataFileUtilClient import DataFileUtil
 import cobrakbase
 import jinja2
 #END_HEADER
@@ -31,7 +31,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "7c6d93244b1fb153bb9e63910bb5a02f5f8a512e"
+    GIT_COMMIT_HASH = "c6855f59cc148620b72fa00395da6832d3ab4967"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block

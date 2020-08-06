@@ -136,15 +136,14 @@ class COBRApyBasedFBA:
         # kbase_ref is list of lists with only one inner list
         kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
-        html_name = 'view.html'
-        html_report_file = os.path.join(self.shared_folder, html_name)
+        html_report_file = os.path.join(self.shared_folder, 'subfolder', 'view.html')
         with open(html_report_file, 'w') as f:
             f.write(build_report(pipeline, model, fva_sol, fba_sol))
 
-        report_shock_id = self.dfu.file_to_shock({'file_path': self.shared_folder,
+        report_shock_id = self.dfu.file_to_shock({'file_path': os.join(self.shared_folder, 'subfolder'),
                                                   'pack': 'zip'})['shock_id']
         html_output = {
-            'name' : html_name,
+            'name' : 'view.html',
             'shock_id': report_shock_id
         }
 

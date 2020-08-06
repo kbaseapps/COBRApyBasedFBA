@@ -92,7 +92,7 @@
       },
       {
          "default_values" : [
-            "coinor_cbc"
+            "glpk"
          ],
          "advanced" : true,
          "id" : "solver",

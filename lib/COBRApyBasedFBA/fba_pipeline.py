@@ -240,6 +240,7 @@ class FBAPipeline:
 def build_report(pipeline, model, fva_sol, fba_sol):
     """Build output report and return string of html."""
     import os
+    import json
     import jinja2
 
     # Helper funcs for formating

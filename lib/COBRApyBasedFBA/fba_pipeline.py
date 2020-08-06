@@ -270,7 +270,7 @@ def build_report(pipeline, model, fva_sol, fba_sol):
     fba_model = 'FBA_MODEL'
     media = 'MEDIA'
 
-    context = {'summary':     [x[1:] for x in fba_object.model.summary().to_frame().itertuples()],
+    context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
                'atp_summary': atp_summary,
                'overview':    [{'name': 'Model',                'value': fba_model},
                                {'name': 'Media',                'value': media},

@@ -8,6 +8,7 @@ from pprint import pformat
 from installed_clients.KBaseReportClient import KBaseReport
 from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
+from installed_clients.DataFileUtilClient import DataFileUtil
 import cobrakbase
 import jinja2
 #END_HEADER
@@ -45,6 +46,8 @@ class COBRApyBasedFBA:
         # saved in the constructor.
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
+        self.dfu = DataFileUtil(self.callback_url)
+
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
         #END_CONSTRUCTOR
@@ -133,30 +136,42 @@ class COBRApyBasedFBA:
         # kbase_ref is list of lists with only one inner list
         kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
+        html_name = 'view.html'
+        html_report_file = os.path.join(self.shared_folder, html_name)
+        with open(html_report_file, 'w') as f:
+            f.write(build_report(pipeline, model, fva_sol, fba_sol))
+
+        report_shock_id = self.dfu.file_to_shock({'file_path': self.shared_folder,
+                                                  'pack': 'zip'})['shock_id']
+        html_output = {
+            'name' : html_name,
+            'shock_id': report_shock_id
+        }
+
         # Step 5 - Build a Report and return
         report_params = {
             'objects_created': [{'ref': f"{params['workspace']}/{params['fba_output_id']}",
                                  'description': 'FBA'}],
             'workspace_name': params['workspace'],
-            'text_message': 'TODO: print FBA solution, etc',
-            # 'html_links': 'COBRApyBasedFBAl/lib/COBRApyBasedFBA/index.html',
-            # 'direct_html_link_index': 0,
-            'direct_html': build_report(pipeline, model, fva_sol, fba_sol),
-            'html_window_height': 333,
+            'html_links': [html_output],
+            'direct_html_link_index': 0,
+            'html_window_height': 500,
+            'report_object_name': 'COBRApyBasedFBA_report_' + str(uuid.uuid4())
         }
 
-        report = KBaseReport(self.callback_url)
-        #report_info = report.create({'report': report_params, 'workspace_name': params['workspace']})
+        report = KBaseReport(self.callback_url, token=ctx['token'])
+        #report_info = report.create({'report', : report_params, 'workspace_name': params['workspace']})
         report_info = report.create_extended_report(report_params)
 
         # Contruct the output to send back
-        results = {'report_name': report_info['name'],
-                   'report_ref': report_info['ref'],
-                   'workspace_name': params['workspace'],
-                   'ws': params['workspace'],
-                   'type': 'KBaseFBA.FBA',
-                   'obj': params['fba_output_id']
-                  }
+        results = {
+            'report_name': report_info['name'],
+            'report_ref': report_info['ref'],
+            'workspace_name': params['workspace'],
+            'ws': params['workspace'],
+            'type': 'KBaseFBA.FBA',
+            'obj': params['fba_output_id']
+        }
 
         #END run_fba_pipeline
 

@@ -250,8 +250,20 @@ def build_report(pipeline, model, fva_sol, fba_sol):
     fba_type = 'pFBA' if pipeline.is_pfba else 'FBA'
 
     # Seperate exchange reaction ids
-    ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
     rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
+    ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
+
+    # Helper function to determine reaction class
+    def class_setter(rct):
+        if fva_sol.minimum[rct] > 0 or fva_sol.maximum[rct] < 0:
+            return 'essential'
+        if fva_sol.minimum[rct] < 0 or fva_sol.maximum[rct] > 0:
+            return 'functional'
+        if math.isclose(fva_sol.minimum[rct], 0) and math.isclose(fva_sol.maximum[rct], 0):
+            return 'blocked'
+
+    rct_classes = [class_setter(rct) for rct in rcts]
+    ex_rct_classes = [class_setter(rct) for ex_rcts in rcts]
 
     # Select ATP metabolite
     if 'atp_c' in model.metabolites:
@@ -295,12 +307,14 @@ def build_report(pipeline, model, fva_sol, fba_sol):
                'reactions': json.dumps([{'id': rct_id,
                                          'min_flux': fva_sol.minimum[rct_id],
                                          'max_flux': fva_sol.maximum[rct_id],
+                                         'class': rct_classes,
                                          'equation': rct.reaction,
                                          'name': nan_format(rct.name)}
                                        for rct_id, rct in zip(rcts, map(model.reactions.get_by_id, rcts))]),
                'ex_reactions': json.dumps([{'id': rct_id,
                                             'min_flux': fva_sol.minimum[rct_id],
                                             'max_flux': fva_sol.maximum[rct_id],
+                                            'class': ex_rct_classes,
                                             'equation': rct.reaction,
                                             'name': nan_format(rct.name)}
                                           for rct_id, rct in zip(ex_rcts, map(model.reactions.get_by_id, ex_rcts))]),

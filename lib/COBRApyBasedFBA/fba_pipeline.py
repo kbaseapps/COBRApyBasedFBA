@@ -262,6 +262,7 @@ def build_report(pipeline, model, fva_sol, fba_sol):
         if math.isclose(fva_sol.minimum[rct], 0) and math.isclose(fva_sol.maximum[rct], 0):
             return 'blocked'
 
+    # Compute reaction classes
     rct_classes = [class_setter(rct) for rct in rcts]
     ex_rct_classes = [class_setter(rct) for rct in ex_rcts]
 
@@ -307,17 +308,21 @@ def build_report(pipeline, model, fva_sol, fba_sol):
                'reactions': json.dumps([{'id': rct_id,
                                          'min_flux': fva_sol.minimum[rct_id],
                                          'max_flux': fva_sol.maximum[rct_id],
-                                         'class': rct_classes,
+                                         'class': class_,
                                          'equation': rct.reaction,
                                          'name': nan_format(rct.name)}
-                                       for rct_id, rct in zip(rcts, map(model.reactions.get_by_id, rcts))]),
+                                       for rct_id, rct, class_ in zip(rcts,
+                                                                      map(model.reactions.get_by_id, rcts),
+                                                                      rct_classes)]),
                'ex_reactions': json.dumps([{'id': rct_id,
                                             'min_flux': fva_sol.minimum[rct_id],
                                             'max_flux': fva_sol.maximum[rct_id],
-                                            'class': ex_rct_classes,
+                                            'class': class_,
                                             'equation': rct.reaction,
                                             'name': nan_format(rct.name)}
-                                          for rct_id, rct in zip(ex_rcts, map(model.reactions.get_by_id, ex_rcts))]),
+                                          for rct_id, rct, class_ in zip(ex_rcts,
+                                                                         map(model.reactions.get_by_id, ex_rcts),
+                                                                         ex_rct_classes)]),
            }
 
     template_dir = os.path.dirname(os.path.realpath(__file__))

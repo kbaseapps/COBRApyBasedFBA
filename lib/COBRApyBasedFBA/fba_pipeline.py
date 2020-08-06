@@ -263,7 +263,7 @@ def build_report(pipeline, model, fva_sol, fba_sol):
             return 'blocked'
 
     rct_classes = [class_setter(rct) for rct in rcts]
-    ex_rct_classes = [class_setter(rct) for ex_rcts in rcts]
+    ex_rct_classes = [class_setter(rct) for rct in ex_rcts]
 
     # Select ATP metabolite
     if 'atp_c' in model.metabolites:

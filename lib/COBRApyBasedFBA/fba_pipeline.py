@@ -277,7 +277,7 @@ def build_report(pipeline, model, fva_sol, fba_sol):
                                {'name': 'Optimization status',  'value': fba_sol.status},
                                {'name': 'Objective',            'value': model.objective},
                                {'name': 'Objective value',      'value': fba_sol.objective_value},
-                               {'name': 'Number of reactions',  'value': len(sol)},
+                               {'name': 'Number of reactions',  'value': len(fva_sol)},
                                {'name': 'Number of compounds',  'value': len(model.metabolites)},
                                {'name': 'FBA type',             'value': fba_type},
                                {'name': 'Loopless FBA',         'value': yes_no_format(pipeline.is_loopless_fba)},

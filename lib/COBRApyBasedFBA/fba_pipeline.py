@@ -255,18 +255,18 @@ def build_report(pipeline, model, fva_sol, fba_sol):
 
     # Helper function to determine reaction class
     def class_setter(rct):
-        lb_zero = math.isclose(fva_sol.minimum[rct], 0, abs_tol=1e-07)
-        ub_zero = math.isclose(fva_sol.maximum[rct], 0, abs_tol=1e-07)
+        min__zero = math.isclose(fva_sol.minimum[rct], 0, abs_tol=1e-07)
+        max__zero = math.isclose(fva_sol.maximum[rct], 0, abs_tol=1e-07)
 
-        lb = 0 if lb_zero else fva_sol.minimum[rct]
-        ub = 0 if ub_zero else fva_sol.maximum[rct]
+        min_ = 0 if min_zero else fva_sol.minimum[rct]
+        max_ = 0 if max_zero else fva_sol.maximum[rct]
 
-        if lb_zero and ub_zero:
+        if min_zero and max_zero:
             return 'blocked'
-        if lb > 0 or ub < 0:
+        if min_ > 0 or max_ < 0:
             return 'essential'
-        if lb < 0 or ub > 0:
-            return 'functional'
+        #if min_ < 0 or max_ > 0:
+        return 'functional'
 
     # Compute reaction classes
     rct_classes = [class_setter(rct) for rct in rcts]
@@ -284,6 +284,15 @@ def build_report(pipeline, model, fva_sol, fba_sol):
     atp_summary = []
     for index, row in zip(df.index, df.itertuples()):
         atp_summary.append([*index, *row[1:]])
+
+
+    if 'essential' in rct_classes:
+        print('essential')
+
+    if 'essential' in ex_rct_classes:
+        print('essential')
+
+    print(rct_classes)
 
 
     # TODO: add correct vals
@@ -330,6 +339,9 @@ def build_report(pipeline, model, fva_sol, fba_sol):
                                                                          map(model.reactions.get_by_id, ex_rcts),
                                                                          ex_rct_classes)]),
            }
+
+
+    print(context)
 
     template_dir = os.path.dirname(os.path.realpath(__file__))
     template_file = 'template.html'

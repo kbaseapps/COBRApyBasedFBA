@@ -255,8 +255,8 @@ def build_report(pipeline, model, fva_sol, fba_sol):
 
     # Helper function to determine reaction class
     def class_setter(rct):
-        min__zero = math.isclose(fva_sol.minimum[rct], 0, abs_tol=1e-07)
-        max__zero = math.isclose(fva_sol.maximum[rct], 0, abs_tol=1e-07)
+        min_zero = math.isclose(fva_sol.minimum[rct], 0, abs_tol=1e-07)
+        max_zero = math.isclose(fva_sol.maximum[rct], 0, abs_tol=1e-07)
 
         min_ = 0 if min_zero else fva_sol.minimum[rct]
         max_ = 0 if max_zero else fva_sol.maximum[rct]

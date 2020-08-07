@@ -131,6 +131,8 @@ class COBRApyBasedFBA:
         builder = KBaseFBAModelToCobraBuilder(fbamodel)
         model = builder.with_media(media).build()
 
+        print(model.summary())
+
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object
         result, fva_sol, fba_sol = pipeline.run(model, media)

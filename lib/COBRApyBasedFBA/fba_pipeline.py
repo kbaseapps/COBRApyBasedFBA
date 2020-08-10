@@ -131,6 +131,10 @@ class FBAPipeline:
         if media.name == 'Complete':
             self.default_max_uptake = 100.
 
+        # TODO: bug in here. uptakes are making the model have objective value of 0
+        #if math.isclose(self.default_max_uptake, 0):
+        #   return
+
         if not math.isclose(self.default_max_uptake, 0):
             for ex_flux in model.medium:
                 model.reactions.get_by_id(ex_flux).lower_bound = -1 * self.default_max_uptake
@@ -148,11 +152,13 @@ class FBAPipeline:
                 if atom_occurences:
                     constrs[atom] += ex_rct.reverse_variable * atom_occurences
 
+        # TODO: should we only add this constraint if self.max_uptakes[atom] > 0 ?
         for atom in self.UPTAKE_ATOMS:
-            model.add_cons_vars(
-                model.problem.Constraint(constrs[atom],
-                                         lb=0,
-                                         ub=self.max_uptakes[atom]))
+            if not math.isclose(self.max_uptakes[atom], 0):
+                model.add_cons_vars(
+                    model.problem.Constraint(constrs[atom],
+                                             lb=0,
+                                             ub=self.max_uptakes[atom]))
 
     def run(self, model, media):
         """This function mutates model."""
@@ -233,11 +239,12 @@ class FBAPipeline:
                                                 self.workspace)
         
         # TODO: add fva_sol and essential_genes to this object in cobrakbase
-        return fba_builder.build(), fva_sol, fba_sol # TODO: Temporary tuple return. add to fva_builder
+        return fba_builder.build(), fva_sol, fba_sol, essential_genes # TODO: Temporary tuple return. add to fva_builder
 
 
 # TODO: see above TODOs, fva_sol, fba_sol should be part of fba_object
-def build_report(pipeline, model, fva_sol, fba_sol):
+def build_report(pipeline, model, fva_sol, fba_sol,
+                 essential_genes, model_id, media_id):
     """Build output report and return string of html."""
     import os
     import json
@@ -249,17 +256,13 @@ def build_report(pipeline, model, fva_sol, fba_sol):
 
     fba_type = 'pFBA' if pipeline.is_pfba else 'FBA'
 
-    # Seperate exchange reaction ids
-    rcts = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
-    ex_rcts = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
-
     # Helper function to determine reaction class
-    def class_setter(rct):
-        min_zero = math.isclose(fva_sol.minimum[rct], 0, abs_tol=1e-07)
-        max_zero = math.isclose(fva_sol.maximum[rct], 0, abs_tol=1e-07)
+    def class_formater(rct_id):
+        min_zero = math.isclose(fva_sol.minimum[rct_id], 0, abs_tol=1e-07)
+        max_zero = math.isclose(fva_sol.maximum[rct_id], 0, abs_tol=1e-07)
 
-        min_ = 0 if min_zero else fva_sol.minimum[rct]
-        max_ = 0 if max_zero else fva_sol.maximum[rct]
+        min_ = 0 if min_zero else fva_sol.minimum[rct_id]
+        max_ = 0 if max_zero else fva_sol.maximum[rct_id]
 
         if min_zero and max_zero:
             return 'blocked'
@@ -268,9 +271,28 @@ def build_report(pipeline, model, fva_sol, fba_sol):
         #if min_ < 0 or max_ > 0:
         return 'functional'
 
-    # Compute reaction classes
-    rct_classes = [class_setter(rct) for rct in rcts]
-    ex_rct_classes = [class_setter(rct) for rct in ex_rcts]
+    # Helper function to format reaction/ex-reaction display data
+    def reaction_formater(fva_sol, ex):
+        """ex specifies exchange reaction"""
+        if fva_sol is None:
+            return 'Select FVA setting and rerun to produce results.'
+
+        # Select either exchange or normal reactions
+        if ex:
+            rct_ids = fva_sol.loc[fva_sol.index.str[:2] == 'EX'].index
+        else:
+            rct_ids = fva_sol.loc[fva_sol.index.str[:2] != 'EX'].index
+
+        # Get reaction objects from ids
+        rcts = map(model.reactions.get_by_id, rct_ids)
+
+        return json.dumps([{'id': rct_id,
+                            'min_flux': fva_sol.minimum[rct_id],
+                            'max_flux': fva_sol.maximum[rct_id],
+                            'class': class_formater(rct_id),
+                            'equation': rct.reaction,
+                            'name': nan_format(rct.name)}
+                           for rct_id, rct in zip(rct_ids, rcts)])
 
     # Select ATP metabolite
     if 'atp_c' in model.metabolites:
@@ -286,23 +308,16 @@ def build_report(pipeline, model, fva_sol, fba_sol):
         atp_summary.append([*index, *row[1:]])
 
 
-    if 'essential' in rct_classes:
-        print('essential')
-
-    if 'essential' in ex_rct_classes:
-        print('essential')
-
-    print(rct_classes)
-
-
-    # TODO: add correct vals
-    fba_model = 'FBA_MODEL'
-    media = 'MEDIA'
+    # TODO: handle case where fva_sol is None
+    # TODO: handle case where essential_genes is empty set
+    # TODO: handle essential genes
+    # TODO: handle case where energy is not part of metabolism (or not correctly listed)
+    # TODO: make optional reaction summary display?
 
     context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
                'atp_summary': atp_summary,
-               'overview':    [{'name': 'Model',                'value': fba_model},
-                               {'name': 'Media',                'value': media},
+               'overview':    [{'name': 'Model',                'value': model_id},
+                               {'name': 'Media',                'value': media_id},
                                {'name': 'Optimization status',  'value': fba_sol.status},
                                {'name': 'Objective',            'value': model.objective},
                                {'name': 'Objective value',      'value': fba_sol.objective_value},
@@ -320,31 +335,24 @@ def build_report(pipeline, model, fva_sol, fba_sol):
                                {'name': 'Media supplement',     'value': len(pipeline.media_supplement_list)},
                                {'name': 'Solver',               'value': pipeline.solver.upper()}
                                ],
-               'reactions': json.dumps([{'id': rct_id,
-                                         'min_flux': fva_sol.minimum[rct_id],
-                                         'max_flux': fva_sol.maximum[rct_id],
-                                         'class': class_,
-                                         'equation': rct.reaction,
-                                         'name': nan_format(rct.name)}
-                                       for rct_id, rct, class_ in zip(rcts,
-                                                                      map(model.reactions.get_by_id, rcts),
-                                                                      rct_classes)]),
-               'ex_reactions': json.dumps([{'id': rct_id,
-                                            'min_flux': fva_sol.minimum[rct_id],
-                                            'max_flux': fva_sol.maximum[rct_id],
-                                            'class': class_,
-                                            'equation': rct.reaction,
-                                            'name': nan_format(rct.name)}
-                                          for rct_id, rct, class_ in zip(ex_rcts,
-                                                                         map(model.reactions.get_by_id, ex_rcts),
-                                                                         ex_rct_classes)]),
+               # 'reaction_tab': {
+               #     'is_reactions': fva_sol is not None,
+               #     'reactions': reaction_formater(fva_sol, ex=False),
+               #  },
+               # 'ex_reaction_tab': {
+               #     'is_reactions': fva_sol is not None,
+               #     'reactions': reaction_formater(fva_sol, ex=True),
+               #  },
+
+               'reactions': reaction_formater(fva_sol, ex=False),
+               'ex_reactions': reaction_formater(fva_sol, ex=True)
            }
 
 
     print(context)
 
-    template_dir = os.path.dirname(os.path.realpath(__file__))
     template_file = 'template.html'
+    template_dir = os.path.dirname(os.path.realpath(__file__))
 
     env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(template_dir),

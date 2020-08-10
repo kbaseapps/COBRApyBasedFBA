@@ -243,18 +243,16 @@ class FBAPipeline:
 
 
 # TODO: see above TODOs, fva_sol, fba_sol should be part of fba_object
-def build_report(pipeline, model, fva_sol, fba_sol,
+def build_report(pipeline, model, fba_sol, fva_sol,
                  essential_genes, model_id, media_id):
     """Build output report and return string of html."""
     import os
     import json
     import jinja2
 
-    # Helper funcs for formating
+    # Helper functions for formating
     yes_no_format = lambda x: 'Yes' if x else 'No'
     nan_format = lambda x: x if x else 'NaN'
-
-    fba_type = 'pFBA' if pipeline.is_pfba else 'FBA'
 
     # Helper function to determine reaction class
     def class_formater(rct_id):
@@ -307,8 +305,7 @@ def build_report(pipeline, model, fva_sol, fba_sol,
     for index, row in zip(df.index, df.itertuples()):
         atp_summary.append([*index, *row[1:]])
 
-
-    # TODO: handle case where fva_sol is None
+    # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
     # TODO: handle case where essential_genes is empty set
     # TODO: handle essential genes
     # TODO: handle case where energy is not part of metabolism (or not correctly listed)
@@ -321,9 +318,9 @@ def build_report(pipeline, model, fva_sol, fba_sol,
                                {'name': 'Optimization status',  'value': fba_sol.status},
                                {'name': 'Objective',            'value': model.objective},
                                {'name': 'Objective value',      'value': fba_sol.objective_value},
-                               {'name': 'Number of reactions',  'value': len(fva_sol)},
+                               {'name': 'Number of reactions',  'value': len(model.reactions)},
                                {'name': 'Number of compounds',  'value': len(model.metabolites)},
-                               {'name': 'FBA type',             'value': fba_type},
+                               {'name': 'FBA type',             'value': 'pFBA' if pipeline.is_pfba else 'FBA'},
                                {'name': 'Loopless FBA',         'value': yes_no_format(pipeline.is_loopless_fba)},
                                {'name': 'Loopless FVA',         'value': yes_no_format(pipeline.is_loopless_fva)},
                                {'name': 'FVA fraction of opt.', 'value': pipeline.fraction_of_optimum_fva},
@@ -335,17 +332,15 @@ def build_report(pipeline, model, fva_sol, fba_sol,
                                {'name': 'Media supplement',     'value': len(pipeline.media_supplement_list)},
                                {'name': 'Solver',               'value': pipeline.solver.upper()}
                                ],
-               # 'reaction_tab': {
-               #     'is_reactions': fva_sol is not None,
-               #     'reactions': reaction_formater(fva_sol, ex=False),
-               #  },
-               # 'ex_reaction_tab': {
-               #     'is_reactions': fva_sol is not None,
-               #     'reactions': reaction_formater(fva_sol, ex=True),
-               #  },
+               'reaction_tab': {
+                   'is_reactions': fva_sol is not None,
+                   'reactions': reaction_formater(fva_sol, ex=False),
+                },
+               'ex_reaction_tab': {
+                   'is_reactions': fva_sol is not None,
+                   'reactions': reaction_formater(fva_sol, ex=True),
+                },
 
-               'reactions': reaction_formater(fva_sol, ex=False),
-               'ex_reactions': reaction_formater(fva_sol, ex=True)
            }
 
 

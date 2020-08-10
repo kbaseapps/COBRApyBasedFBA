@@ -92,15 +92,21 @@
             <h3>
                 Reactions
             </h3>
-            <table id="table-reactions" class="table table-striped table-bordered" style="width:100%">
-            </table>
+            {% if reaction_tab.is_reactions %}
+                <table id="table-reactions" class="table table-striped table-bordered" style="width:100%"></table>
+            {% else %}
+                <p> {{reaction_tab.reactions}} </p>
+            {% endif %}
         </div>
         <div class="tab-pane fade" id="nav-ex-reactions" role="tabpanel" aria-labelledby="nav-ex-reactions-tab">
             <h3>
                 Exchange Reactions
             </h3>
-            <table id="table-ex-reactions" class="table table-striped table-bordered" style="width:100%">
-            </table>
+            {% if ex_reaction_tab.is_reactions %}
+            <table id="table-ex-reactions" class="table table-striped table-bordered" style="width:100%"></table>
+            {% else %}
+                <p> {{reaction_tab.reactions}} </p>
+            {% endif %}
         </div>
 	</div>
 </div>
@@ -108,7 +114,7 @@
 $(document).ready(function() {
     "use strict";
     var reactions = {
-        data: {{ reactions|safe }},
+        data: {{ reaction_tab.reactions|safe }},
         cols: {
             id: {
                 title: "Reaction",
@@ -145,7 +151,7 @@ $(document).ready(function() {
         ],
     },
     ex_reactions = {
-        data: {{ ex_reactions|safe }},
+        data: {{ ex_reaction_tab.reactions|safe }},
         cols: {
             id: {
                 title: "Compound",

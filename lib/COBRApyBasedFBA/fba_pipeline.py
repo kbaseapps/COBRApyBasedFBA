@@ -292,27 +292,38 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                             'name': nan_format(rct.name)}
                            for rct_id, rct in zip(rct_ids, rcts)])
 
-    # Select ATP metabolite
-    if 'atp_c' in model.metabolites:
-        df = model.metabolites.atp_c.summary().to_frame()
-    elif 'cpd00002' in model.metabolites:
-        df = model.metabolites.cpd00002.summary().to_frame()
-    else:
-        # Create empty data frame to display void ATP summary
-        df = pd.DataFrame()
+    def atp_summary_formatter(model):
+        """Returns list of ATP summary values if metabolites are found
+           or a message stating they could not be found. Also return a
+           bool specicifying whether or not summary exists."""
+        # Select ATP metabolite
+        if 'atp_c' in model.metabolites:
+            df = model.metabolites.atp_c.summary().to_frame()
+        elif 'cpd00002' in model.metabolites:
+            df = model.metabolites.cpd00002.summary().to_frame()
+        else:
+            # Empty ATP summary
+            pass
+        msg = 'Could not find atp_c or cpd00002 in metabolites. ' \
+              'Add either of these metabolites to the model in ' \
+              'order to display an ATP summary.'
+        return msg, False
 
-    atp_summary = []
-    for index, row in zip(df.index, df.itertuples()):
-        atp_summary.append([*index, *row[1:]])
+        atp_summary = []
+        for index, row in zip(df.index, df.itertuples()):
+            atp_summary.append([*index, *row[1:]])
+
+        return atp_summary, True
+
+    atp_summary, is_atp_summary = atp_summary_formatter(model)
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
     # TODO: handle case where essential_genes is empty set
     # TODO: handle essential genes
-    # TODO: handle case where energy is not part of metabolism (or not correctly listed)
     # TODO: make optional reaction summary display?
 
     context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
-               'atp_summary': atp_summary,
+               'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},
                'overview':    [{'name': 'Model',                'value': model_id},
                                {'name': 'Media',                'value': media_id},
                                {'name': 'Optimization status',  'value': fba_sol.status},

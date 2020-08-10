@@ -59,22 +59,26 @@
                 {% endfor %}
             </table>
             <h2>ATP summary</h2>
-            <table style="width:100%">
-              <tr>
-                <th>SIDE</th>
-                <th>ID</th>
-                <th>PERCENT</th>
-                <th>FLUX</th>
-                <th>REACTION</th>
-              </tr>
-              {% for row in atp_summary %}
-              <tr>
-                {% for entry in row %}
-                    <td style="text-align: center">{{ entry }}</td>
-                {% endfor %}
-              </tr>
-              {% endfor %}
-            </table>
+            {% if atp_summary.is_atp_summary %}
+                <table style="width:100%">
+                  <tr>
+                    <th>SIDE</th>
+                    <th>ID</th>
+                    <th>PERCENT</th>
+                    <th>FLUX</th>
+                    <th>REACTION</th>
+                  </tr>
+                  {% for row in atp_summary.summary %}
+                  <tr>
+                    {% for entry in row %}
+                        <td style="text-align: center">{{ entry }}</td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+            {% else %}
+                {{atp_summary.summary}}
+            {% endif %}
         </div>
 		<div class="tab-pane fade" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
 			<table class="table table-striped table-bordered">

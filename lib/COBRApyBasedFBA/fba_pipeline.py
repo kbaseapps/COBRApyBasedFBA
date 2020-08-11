@@ -54,7 +54,7 @@ class FBAPipeline:
         self.target_reaction = ''
 
         # Max uptakes for exchange reactions
-        self.max_uptakes = {atom: 0. for atom in self.UPTAKE_ATOMS}
+        self.max_uptakes = {atom: None for atom in self.UPTAKE_ATOMS}
 
         # Used with complete media. Default is 0, if complete media
         # change from 0 to 100. Otherwise if user specifies
@@ -105,15 +105,12 @@ class FBAPipeline:
         p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
 
         # Uptakes
-        print(type(params['max_c_uptake']))
         p.max_uptakes['C'] = params['max_c_uptake']
         p.max_uptakes['N'] = params['max_n_uptake']
         p.max_uptakes['P'] = params['max_p_uptake']
         p.max_uptakes['S'] = params['max_s_uptake']
         p.max_uptakes['O'] = params['max_o_uptake']
         p.default_max_uptake = params['default_max_uptake']
-
-        print(p.max_uptakes)
 
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
@@ -138,10 +135,12 @@ class FBAPipeline:
             for ex_flux in model.medium:
                 model.reactions.get_by_id(ex_flux).lower_bound = -1 * self.default_max_uptake
 
-        # TODO: address bug. only add constraints if user specifies max uptakes.
-        #       otherwise return here
+        # Only add constraints when user specifies to, otherwise max_uptakes will be None
+        constrs = {atom: 0. for atom in self.UPTAKE_ATOMS if self.max_uptakes[atom] is not None}
 
-        constrs = {atom: 0. for atom in self.UPTAKE_ATOMS}
+        # Return early if user doesn't specifies any max uptakes
+        if not constrs:
+            return
 
         for rct_id in model.medium:
 
@@ -154,13 +153,11 @@ class FBAPipeline:
                 if atom_occurences:
                     constrs[atom] += ex_rct.reverse_variable * atom_occurences
 
-        # TODO: should we only add this constraint if self.max_uptakes[atom] > 0 ?
         for atom in self.UPTAKE_ATOMS:
-            if not math.isclose(self.max_uptakes[atom], 0): # TODO: temp fix, remove
-                model.add_cons_vars(
-                    model.problem.Constraint(constrs[atom],
-                                             lb=0,
-                                             ub=self.max_uptakes[atom]))
+            model.add_cons_vars(
+                model.problem.Constraint(constrs[atom],
+                                         lb=0,
+                                         ub=self.max_uptakes[atom]))
 
     def run(self, model, media):
         """This function mutates model."""

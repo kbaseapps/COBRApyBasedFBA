@@ -105,12 +105,15 @@ class FBAPipeline:
         p.fraction_of_optimum_pfba = params['fraction_of_optimum_pfba']
 
         # Uptakes
+        print(type(params['max_c_uptake']))
         p.max_uptakes['C'] = params['max_c_uptake']
         p.max_uptakes['N'] = params['max_n_uptake']
         p.max_uptakes['P'] = params['max_p_uptake']
         p.max_uptakes['S'] = params['max_s_uptake']
         p.max_uptakes['O'] = params['max_o_uptake']
         p.default_max_uptake = params['default_max_uptake']
+
+        print(p.max_uptakes)
 
         # Check if list params contain data. If so parse, else use default []
         if params['media_supplement_list']:
@@ -365,8 +368,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                     'essential_genes': essential_gene_labels
                 }
            }
-
-    print(context)
 
     template_file = 'template.html'
     template_dir = os.path.dirname(os.path.realpath(__file__))

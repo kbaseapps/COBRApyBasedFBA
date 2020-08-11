@@ -238,10 +238,8 @@ class FBAPipeline:
                                                 self.workspace)
         
         # TODO: add fva_sol and essential_genes to this object in cobrakbase
-        return fba_builder.build(), fva_sol, fba_sol, essential_genes # TODO: Temporary tuple return. add to fva_builder
+        return fba_builder.build(), fva_sol, fba_sol, essential_genes
 
-
-# TODO: see above TODOs, fva_sol, fba_sol should be part of fba_object
 def build_report(pipeline, model, fba_sol, fva_sol,
                  essential_genes, model_id, media_id):
     """Build output report and return string of html."""
@@ -319,7 +317,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             msg = 'Select simulate all single KO to produce results.'
             return msg, False
 
-        return json.dumps([{'name': nan_format(gene.name),
+        return json.dumps([{'name': nan_format(gene.id),
                             'essential': yes_no_format(gene in essential_genes)}
                            for gene in model.genes]), True
 

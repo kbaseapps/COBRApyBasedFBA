@@ -426,12 +426,16 @@
          "allow_multiple" : false,
          "optional" : true,
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          }
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "advanced" : true,
          "default_values" : [""],
@@ -442,7 +446,9 @@
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "allow_multiple" : false,
          "optional" : true,
@@ -453,7 +459,9 @@
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "id" : "max_s_uptake",
          "default_values" : [""],
@@ -470,7 +478,9 @@
          "allow_multiple" : false,
          "optional" : true,
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          }
       },
       {

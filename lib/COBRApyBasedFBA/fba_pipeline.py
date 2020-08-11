@@ -148,12 +148,12 @@ class FBAPipeline:
             compound = list(ex_rct.metabolites)[0]
             cmp_atoms = atom_count(compound.formula)
 
-            for atom in self.UPTAKE_ATOMS:
+            for atom in constrs:
                 atom_occurences = cmp_atoms.get(atom)
                 if atom_occurences:
                     constrs[atom] += ex_rct.reverse_variable * atom_occurences
 
-        for atom in self.UPTAKE_ATOMS:
+        for atom in constrs:
             model.add_cons_vars(
                 model.problem.Constraint(constrs[atom],
                                          lb=0,
@@ -284,9 +284,9 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         rcts = map(model.reactions.get_by_id, rct_ids)
 
         return json.dumps([{'id': rct_id,
-                            'flux': fba_sol.fluxes[rct_id],
-                            'min_flux': fva_sol.minimum[rct_id],
-                            'max_flux': fva_sol.maximum[rct_id],
+                            'flux': round(fba_sol.fluxes[rct_id], 6),
+                            'min_flux': round(fva_sol.minimum[rct_id], 6),
+                            'max_flux': round(fva_sol.maximum[rct_id], 6),
                             'class': class_formater(rct_id),
                             'equation': rct.reaction,
                             'name': nan_format(rct.name)}

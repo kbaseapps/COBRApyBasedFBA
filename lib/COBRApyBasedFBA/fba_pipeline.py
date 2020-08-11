@@ -131,13 +131,12 @@ class FBAPipeline:
         if media.name == 'Complete':
             self.default_max_uptake = 100.
 
-        # TODO: bug in here. uptakes are making the model have objective value of 0
-        #if math.isclose(self.default_max_uptake, 0):
-        #   return
-
         if not math.isclose(self.default_max_uptake, 0):
             for ex_flux in model.medium:
                 model.reactions.get_by_id(ex_flux).lower_bound = -1 * self.default_max_uptake
+
+        # TODO: address bug. only add constraints if user specifies max uptakes.
+        #       otherwise return here
 
         constrs = {atom: 0. for atom in self.UPTAKE_ATOMS}
 
@@ -154,7 +153,7 @@ class FBAPipeline:
 
         # TODO: should we only add this constraint if self.max_uptakes[atom] > 0 ?
         for atom in self.UPTAKE_ATOMS:
-            if not math.isclose(self.max_uptakes[atom], 0):
+            if not math.isclose(self.max_uptakes[atom], 0): # TODO: temp fix, remove
                 model.add_cons_vars(
                     model.problem.Constraint(constrs[atom],
                                              lb=0,
@@ -303,11 +302,10 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             df = model.metabolites.cpd00002.summary().to_frame()
         else:
             # Empty ATP summary
-            pass
-        msg = 'Could not find atp_c or cpd00002 in metabolites. ' \
-              'Add either of these metabolites to the model in ' \
-              'order to display an ATP summary.'
-        return msg, False
+            msg = 'Could not find atp_c or cpd00002 in metabolites. ' \
+                  'Add either of these metabolites to the model in ' \
+                  'order to display an ATP summary.'
+            return msg, False
 
         atp_summary = []
         for index, row in zip(df.index, df.itertuples()):
@@ -315,12 +313,23 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
         return atp_summary, True
 
+    def essential_genes_formatter(model, essential_genes):
+        if not essential_genes:
+            msg = 'Select simulate all single KO to produce results.'
+            return msg, False
+
+        return json.dumps([{'name': nan_format(gene.name),
+                            'essential': yes_no_format(gene in essential_genes)}
+                           for gene in model.genes]), True
+
+
     atp_summary, is_atp_summary = atp_summary_formatter(model)
 
+    essential_gene_labels, is_essential_genes = essential_genes_formatter(model, essential_genes)
+
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
-    # TODO: handle case where essential_genes is empty set
-    # TODO: handle essential genes
     # TODO: make optional reaction summary display?
+    # TODO: display fba flux for exchange reactions and or normal reactions
 
     context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
                'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},
@@ -345,15 +354,17 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                ],
                'reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fva_sol, ex=False),
+                   'reactions': reaction_formater(fva_sol, ex=False)
                 },
                'ex_reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fva_sol, ex=True),
+                   'reactions': reaction_formater(fva_sol, ex=True)
                 },
-
+                'essential_genes_tab': {
+                    'is_essential_genes': is_essential_genes,
+                    'essential_genes': essential_gene_labels
+                }
            }
-
 
     print(context)
 

@@ -269,7 +269,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         return 'functional'
 
     # Helper function to format reaction/ex-reaction display data
-    def reaction_formater(fva_sol, ex):
+    def reaction_formater(fba_sol, fva_sol, ex):
         """ex specifies exchange reaction"""
         if fva_sol is None:
             return 'Select FVA setting and rerun to produce results.'
@@ -284,6 +284,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         rcts = map(model.reactions.get_by_id, rct_ids)
 
         return json.dumps([{'id': rct_id,
+                            'flux': fba_sol.fluxes[rct_id],
                             'min_flux': fva_sol.minimum[rct_id],
                             'max_flux': fva_sol.maximum[rct_id],
                             'class': class_formater(rct_id),
@@ -329,7 +330,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
     # TODO: make optional reaction summary display?
-    # TODO: display fba flux for exchange reactions and or normal reactions
 
     context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
                'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},
@@ -354,11 +354,11 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                ],
                'reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fva_sol, ex=False)
+                   'reactions': reaction_formater(fba_sol, fva_sol, ex=False)
                 },
                'ex_reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fva_sol, ex=True)
+                   'reactions': reaction_formater(fba_sol, fva_sol, ex=True)
                 },
                 'essential_genes_tab': {
                     'is_essential_genes': is_essential_genes,

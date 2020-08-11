@@ -493,7 +493,9 @@
          "allow_multiple" : false,
          "optional" : true,
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          }
       }
    ],

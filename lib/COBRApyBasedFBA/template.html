@@ -200,23 +200,6 @@ $(document).ready(function() {
             'class_',
             'equation'
         ],
-    },
-    essential_genes = {
-        data: {{ essential_genes_tab.essential_genes|safe }},
-        cols: {
-            id: {
-                title: "Name",
-                data:   d => d.name,
-            },
-            essential: {
-                title: "Essential",
-                data:   d => d.essential,
-            }
-        },
-        colOrder: [
-            'id',
-            'essential'
-        ],
     }
 
     $('#nav-tab a').on('click', function (e) {

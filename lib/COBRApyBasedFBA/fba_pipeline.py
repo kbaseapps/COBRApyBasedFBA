@@ -329,7 +329,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     essential_gene_labels, is_essential_genes = essential_genes_formatter(model, essential_genes)
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
-    # TODO: make optional reaction summary display?
 
     context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
                'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},

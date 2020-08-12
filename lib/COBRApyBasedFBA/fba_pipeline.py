@@ -297,11 +297,13 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         # Select ATP metabolite
         if 'atp_c' in model.metabolites:
             df = model.metabolites.atp_c.summary().to_frame()
+        elif 'ATP_c' in model.metabolites:
+            df = model.metabolites.ATP_c.summary().to_frame()
         elif 'cpd00002_c0' in model.metabolites:
             df = model.metabolites.cpd00002.summary().to_frame()
         else:
             # Empty ATP summary
-            msg = 'Could not find atp_c or cpd00002_c0 in metabolites. ' \
+            msg = 'Could not find atp_c, ATP_c or cpd00002_c0 in metabolites. ' \
                   'Add either of these metabolites to the model in ' \
                   'order to display an ATP summary.'
             return msg, False

@@ -211,6 +211,23 @@ $(document).ready(function() {
             'class_',
             'equation'
         ],
+    },
+    essential_genes = {
+        data: {{ essential_genes_tab.essential_genes|safe }},
+        cols: {
+            id: {
+                title: "Name",
+                data:   d => d.name,
+            },
+            essential: {
+                title: "Essential",
+                data:   d => d.essential,
+            }
+        },
+        colOrder: [
+            'id',
+            'essential'
+        ],
     }
 
     $('#nav-tab a').on('click', function (e) {
@@ -230,6 +247,11 @@ $(document).ready(function() {
     $('#table-ex-reactions').DataTable( {
         data: Object.values( ex_reactions.data ),
         columns: ex_reactions.colOrder.map( e => ex_reactions.cols[ e ] ),
+    } );
+
+    $('#table-genes').DataTable( {
+        data: Object.values( essential_genes.data ),
+        columns: essential_genes.colOrder.map( e => essential_genes.cols[ e ] ),
     } );
 
 } );

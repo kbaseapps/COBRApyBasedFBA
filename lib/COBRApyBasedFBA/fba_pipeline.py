@@ -291,6 +291,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                            for rct_id, rct in zip(rct_ids, rcts)])
 
     def model_summary(model):
+        import numpy as np
 
         df = model.summary().to_frame()
 

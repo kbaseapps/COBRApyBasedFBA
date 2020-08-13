@@ -295,12 +295,13 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
         df = model.summary().to_frame()
 
+        # TODO: bug here? kbase names don't have EX_ but cobra models do
         to_ex_rct_name = lambda x: model.reactions.get_by_id('EX_' + x).name + f'\n({x})' if x is not np.nan else 'nan'
         to_rct_name = lambda x: model.reactions.get_by_id(x).name + f'\n({x})' if x is not np.nan else 'nan'
 
-        df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(to_ex_rct_name)
+        df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(to_rct_name)
         df[('IN_FLUXES',  'FLUX')] = df[('IN_FLUXES',  'FLUX')].apply(lambda x: round(x, 6))
-        df[('OUT_FLUXES', 'ID')] = df[('OUT_FLUXES',   'ID')].apply(to_ex_rct_name)
+        df[('OUT_FLUXES', 'ID')] = df[('OUT_FLUXES',   'ID')].apply(to_rct_name)
         df[('OUT_FLUXES', 'FLUX')] = df[('OUT_FLUXES', 'FLUX')].apply(lambda x: round(x, 6))
         df[('OBJECTIVES', 'ID')] = df[('OBJECTIVES',   'ID')].apply(to_rct_name)
         df[('OBJECTIVES', 'FLUX')] = df[('OBJECTIVES', 'FLUX')].apply(lambda x: round(x, 6))

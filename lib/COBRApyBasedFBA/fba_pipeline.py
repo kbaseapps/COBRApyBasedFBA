@@ -290,6 +290,25 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                             'name': nan_format(rct.name)}
                            for rct_id, rct in zip(rct_ids, rcts)])
 
+    def model_summary(model):
+
+        df = model.summary().to_frame()
+
+        to_ex_rct_name = lambda x: model.reactions.get_by_id('EX_' + x).name + f'\n({x})' if x is not np.nan else 'nan'
+        to_rct_name = lambda x: model.reactions.get_by_id(x).name + f'\n({x})' if x is not np.nan else 'nan'
+
+        df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(to_ex_rct_name)
+        df[('IN_FLUXES',  'FLUX')] = df[('IN_FLUXES',  'FLUX')].apply(lambda x: round(x, 6))
+        df[('OUT_FLUXES', 'ID')] = df[('OUT_FLUXES',   'ID')].apply(to_ex_rct_name)
+        df[('OUT_FLUXES', 'FLUX')] = df[('OUT_FLUXES', 'FLUX')].apply(lambda x: round(x, 6))
+        df[('OBJECTIVES', 'ID')] = df[('OBJECTIVES',   'ID')].apply(to_rct_name)
+        df[('OBJECTIVES', 'FLUX')] = df[('OBJECTIVES', 'FLUX')].apply(lambda x: round(x, 6))
+
+        summary = []
+        for row in df.itertuples():
+            summary.append(row[1:])
+        return summary
+
     def atp_summary_formatter(model):
         """Returns list of ATP summary values if metabolites are found
            or a message stating they could not be found. Also return a
@@ -308,9 +327,17 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                   'order to display an ATP summary.'
             return msg, False
 
+        df['FLUX'] = df['FLUX'].apply(lambda x: round(x, 6))
+        df['PERCENT'] = df['PERCENT'].apply(lambda x: round(x, 6))
+        df['SIDE']= df.index.get_level_values(0)
+        df['NAME_ID'] = [model.reactions.get_by_id(rct_id).name + f'\n({rct_id})'
+                         for rct_id in df.index.get_level_values(1)]
+
         atp_summary = []
-        for index, row in zip(df.index, df.itertuples()):
-            atp_summary.append([*index, *row[1:]])
+        for row in zip(df['SIDE'], df['NAME_ID'], df['PERCENT'],
+                       df['FLUX'], df['REACTION_STRING']):
+            print(row)
+            atp_summary.append(list(row))
 
         return atp_summary, True
 
@@ -327,7 +354,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
 
-    context = {'summary':     [x[1:] for x in model.summary().to_frame().itertuples()],
+    context = {'summary':     model_summary(model),
                'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},
                'overview':    [{'name': 'Model',                    'value': model_id},
                                {'name': 'Media',                    'value': media_id},

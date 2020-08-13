@@ -102,7 +102,7 @@ class COBRApyBasedFBA:
         # return variables are: results
         #BEGIN run_fba_pipeline
 
-        # TODO: for debugging
+        # TODO: for debugging. remove all prints
         print('PARAMS')
         print(params)
 

@@ -270,7 +270,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     def reaction_formater(fba_sol, fva_sol, ex):
         """ex specifies exchange reaction"""
         if fva_sol is None:
-            return 'Select FVA setting and rerun to produce results.'
+            josn.dumps([])
 
         # Select either exchange or normal reactions
         if ex:
@@ -316,17 +316,14 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
     def essential_genes_formatter(model, essential_genes):
         if not essential_genes:
-            msg = 'Select simulate all single KO to produce results.'
-            return msg, False
+            return json.dumps([])
 
         return json.dumps([{'name': nan_format(gene.id),
                             'essential': yes_no_format(gene in essential_genes)}
-                           for gene in model.genes]), True
+                          for gene in model.genes])
 
 
     atp_summary, is_atp_summary = atp_summary_formatter(model)
-
-    essential_gene_labels, is_essential_genes = essential_genes_formatter(model, essential_genes)
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
 
@@ -353,15 +350,18 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                ],
                'reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fba_sol, fva_sol, ex=False)
+                   'reactions': reaction_formater(fba_sol, fva_sol, ex=False),
+                   'help': 'Select FVA setting and rerun to produce results.'
                 },
                'ex_reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fba_sol, fva_sol, ex=True)
+                   'reactions': reaction_formater(fba_sol, fva_sol, ex=True),
+                   'help': 'Select FVA setting and rerun to produce results.'
                 },
                 'essential_genes_tab': {
-                    'is_essential_genes': is_essential_genes,
-                    'essential_genes': essential_gene_labels
+                    'is_essential_genes': len(essential_genes) > 0,
+                    'essential_genes': essential_genes_formatter(model, essential_genes),
+                    'help': 'Select simulate all single KO to produce results.'
                 }
            }
 

@@ -309,15 +309,14 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             try:
                 name = model.reactions.get_by_id(rct_id).name
             except:
-                pass:
+                pass
             else:
                 return name + f'\n({rct_id})'
-
 
             try:
                 name = model.metabolites.get_by_id(rct_id).name
             except:
-                pass:
+                pass
             else:
                 return name + f'\n({rct_id})'
 

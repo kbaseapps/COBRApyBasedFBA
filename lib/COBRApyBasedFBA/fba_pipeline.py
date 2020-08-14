@@ -354,15 +354,15 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                   'order to display an ATP summary.'
             return msg, False
 
-        rcts = [model.reactions.get_by_id(rct_id)
+        rcts = [(model.reactions.get_by_id(rct_id), rct_id)
                 for rct_id in df.index.get_level_values(1)]
 
         df['FLUX'] = df['FLUX'].apply(lambda x: round(x, 6))
         df['PERCENT'] = df['PERCENT'].apply(lambda x: round(x, 6))
         df['SIDE']= df.index.get_level_values(0)
-        df['NAME_ID'] = [rct.name + f'\n({rct_id})' for rct in rcts]
+        df['NAME_ID'] = [rct.name + f'\n({rct_id})' for rct, rct_id in rcts]
         df['REACTION_STRING'] = [rct.build_reaction_string(use_metabolite_names=True)
-                                 for rct in rcts]
+                                 for rct, _ in rcts]
 
         atp_summary = []
         for row in zip(df['SIDE'], df['NAME_ID'], df['PERCENT'],

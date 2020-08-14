@@ -11,7 +11,6 @@ from installed_clients.DataFileUtilClient import DataFileUtil
 from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
 import cobrakbase
-import jinja2
 #END_HEADER
 
 

@@ -286,7 +286,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                             'min_flux': round(fva_sol.minimum[rct_id], 6),
                             'max_flux': round(fva_sol.maximum[rct_id], 6),
                             'class': class_formater(rct_id),
-                            'equation': rct.reaction,
+                            'equation': rct.build_reaction_string(use_metabolite_names=True),
                             'name': nan_format(rct.name)}
                            for rct_id, rct in zip(rct_ids, rcts)])
 
@@ -320,9 +320,9 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             else:
                 return name + f'\n({rct_id})'
 
-        # TODO: bug here? kbase names don't have EX_ but cobra models do
-        #to_ex_rct_name = lambda x: model.reactions.get_by_id('EX_' + x).name + f'\n({x})' if x is not np.nan else 'nan'
-        #to_rct_name = lambda x: model.reactions.get_by_id(x).name + f'\n({x})' if x is not np.nan else 'nan'
+            # TODO: what to print here? could not find rct in reactions, ex_rcts or metabolites
+            return 'nan'
+
 
         df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(rct_name)
         df[('IN_FLUXES',  'FLUX')] = df[('IN_FLUXES',  'FLUX')].apply(lambda x: round(x, 6))
@@ -363,7 +363,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         atp_summary = []
         for row in zip(df['SIDE'], df['NAME_ID'], df['PERCENT'],
                        df['FLUX'], df['REACTION_STRING']):
-            print(row)
             atp_summary.append(list(row))
 
         return atp_summary, True
@@ -375,7 +374,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         return json.dumps([{'name': nan_format(gene.id),
                             'essential': yes_no_format(gene in essential_genes)}
                           for gene in model.genes])
-
 
     atp_summary, is_atp_summary = atp_summary_formatter(model)
 

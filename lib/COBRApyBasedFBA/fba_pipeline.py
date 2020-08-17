@@ -263,7 +263,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     def reaction_formater(fba_sol, fva_sol, ex):
         """ex specifies exchange reaction"""
         if fva_sol is None:
-            josn.dumps([])
+            json.dumps([])
 
         # Select either exchange or normal reactions
         if ex:

@@ -245,7 +245,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     # Helper functions for formating
     yes_no_format = lambda x: 'Yes' if x else 'No'
     missing_format = lambda x: x if x else '-'
-    nan_format = lambda x: '-' if x == np.nan else x
+    nan_format = lambda x: '-' if x is np.nan else x
     round_format = lambda x: nan_format(round(x, 6))
 
     # Helper function to determine reaction class

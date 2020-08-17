@@ -336,6 +336,28 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             summary.append(row[1:])
         return summary
 
+    def round_float_str(s, precision=6):
+        """
+        Given a string containing floats delimited by whitespace
+        round each float in the string and return the rounded string.
+
+        Parameters
+        ----------
+        s : str
+            String containing floats
+        precision : int
+            Number of decimals to round each float to
+        """
+        round_str = ''
+        for token in s.split():
+            try:
+                f = round(float(token), precision)
+                round_str += str(f)
+            except:
+                round_str += token
+            round_str += ' '
+        return round_str
+
     def atp_summary_formatter(model):
         """Returns list of ATP summary values if metabolites are found
            or a message stating they could not be found. Also return a
@@ -361,7 +383,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         df['PERCENT'] = df['PERCENT'].apply(lambda x: f'{round(x, 2)}%')
         df['SIDE']= df.index.get_level_values(0)
         df['NAME_ID'] = [rct.name + f'\n({rct_id})' for rct, rct_id in rcts]
-        df['REACTION_STRING'] = [rct.build_reaction_string(use_metabolite_names=True)
+        df['REACTION_STRING'] = [round_float_str(rct.build_reaction_string(use_metabolite_names=True))
                                  for rct, _ in rcts]
 
         atp_summary = []

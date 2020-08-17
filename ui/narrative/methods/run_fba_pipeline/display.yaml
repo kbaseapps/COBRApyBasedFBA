@@ -41,12 +41,6 @@ parameters :
         short-hint : |
             Select optimization solver to use. The open source solvers [GLPK, COINOR-CBC] are available.
 
-    minimize_flux :
-        ui-name : |
-            Minimize Flux?
-        short-hint : |
-            Check this box to minimize the sum of all fluxes *after* the primary objective function has been optimized i.e. run parsimonious FBA.
-
     all_reversible :
         ui-name : |
             Make all reactions reversible?
@@ -59,11 +53,11 @@ parameters :
         short-hint : |
             Check this box to minimize the model objective. If unchecked, objective will be maximized.
 
-    loopless_fba :
+    fba_type :
         ui-name : |
-            Run loopless FBA?
+            FBA type?
         short-hint : |
-            Check this box to run loopless FBA with the CycleFreeFlux algorithm. Does not run if *Minimize Flux* is checked.
+            Select between pFBA, loopless FBA with the CycleFreeFlux algorithm or regular FBA.
 
     loopless_fva :
         ui-name : |
@@ -75,7 +69,7 @@ parameters :
         ui-name : |
             Fraction of optimum for minimizing flux
         short-hint : |
-            Sets fraction of optimum for *Minimize Flux* i.e. parsimonious FBA. Value must be between 0 and 1, defaults to 1.
+            Sets fraction of optimum for *pFBA* i.e. parsimonious FBA. Value must be between 0 and 1, defaults to 1.
 
     fraction_of_optimum_fva :
         ui-name : |

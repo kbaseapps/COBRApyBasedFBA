@@ -20,17 +20,12 @@ class FBAPipeline:
         # If true, make all reactions in model reversible.
         self.is_all_reversible = False
 
-        # If true, run pFBA to compute FBA solution.
-        self.is_pfba = False
-
         # If true, run gene knockout algorithm on each gene
         # to determine the set of the essential genes.
         self.is_single_ko = False
 
-        # If true, run loopless FBA with CycleFreeFlux
-        # algorithm inplace of regular FBA. Will not run
-        # when is_pfba is true.
-        self.is_loopless_fba = False
+        # Sets FBA type, either 'pFBA', 'loopless FBA' or 'FBA'
+        self.fba_type = 'pFBA'
 
         # If true, run loopless FVA with CycleFreeFlux.
         self.is_loopless_fva = False
@@ -71,7 +66,7 @@ class FBAPipeline:
         # Custom bounds to add to reaction in model
         self.custom_bound_list = []
 
-        # TODO: write comment
+        # TODO: write comment. should this be removed?
         self.media_supplement_list = []
 
         # Kbase ID of the returning FBA object.
@@ -94,9 +89,8 @@ class FBAPipeline:
         # Optimization and algorithmic params
         p.solver = params['solver']
         p.is_run_fva = params['fva']
-        p.is_pfba = params['minimize_flux']
+        p.fba_type = params['fba_type']
         p.is_single_ko = params['simulate_ko']
-        p.is_loopless_fba = params['loopless_fba']
         p.is_loopless_fva = params['loopless_fva']
         p.target_reaction = params['target_reaction']
         p.is_all_reversible = params['all_reversible']
@@ -205,11 +199,11 @@ class FBAPipeline:
             model.objective.direction = 'min'
 
         # Compute FBA solution
-        if self.is_pfba:
+        if self.fba_type == 'pFBA':
             from cobra.flux_analysis import pfba
             fba_sol = pfba(model,
                            fraction_of_optimum=self.fraction_of_optimum_pfba)
-        elif self.is_loopless_fba:
+        elif self.fba_type == 'Loopless FBA':
             # Run CycleFreeFlux algorithm
             fba_sol = cobra.flux_analysis.loopless_solution(model)
         else:
@@ -418,7 +412,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                {'name': 'Target objective value',   'value': f'{obj_value} ({obj_units})'},
                                {'name': 'Number of reactions',      'value': len(model.reactions)},
                                {'name': 'Number of compounds',      'value': len(model.metabolites)},
-                               {'name': 'FBA type',                 'value': 'pFBA' if pipeline.is_pfba else 'FBA'},
+                               {'name': 'FBA type',                 'value': pipeline.fba_type},
                                {'name': 'Loopless FBA',             'value': yes_no_format(pipeline.is_loopless_fba)},
                                {'name': 'Loopless FVA',             'value': yes_no_format(pipeline.is_loopless_fva)},
                                {'name': 'FVA fraction of opt.',     'value': pipeline.fraction_of_optimum_fva},

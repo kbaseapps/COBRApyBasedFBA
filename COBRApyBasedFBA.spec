@@ -68,9 +68,8 @@ module COBRApyBasedFBA {
         string solver;
         
         bool minimize_objective;
+        string fba_type;
         bool fva;
-        bool minimize_flux;
-        bool loopless_fba;
         bool loopless_fva;
         bool simulate_ko;
         bool all_reversible;

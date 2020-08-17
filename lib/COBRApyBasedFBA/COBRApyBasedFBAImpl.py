@@ -31,7 +31,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "c6855f59cc148620b72fa00395da6832d3ab4967"
+    GIT_COMMIT_HASH = "ff2701ded292e9c2bd10cf1e44cfd9ef1a4a339e"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -69,20 +69,19 @@ class COBRApyBasedFBA:
            string representing a FBA id.), parameter "workspace" of type
            "workspace_name" (A string representing a workspace name.),
            parameter "solver" of String, parameter "minimize_objective" of
-           type "bool" (A binary boolean), parameter "fva" of type "bool" (A
-           binary boolean), parameter "minimize_flux" of type "bool" (A
-           binary boolean), parameter "loopless_fba" of type "bool" (A binary
-           boolean), parameter "loopless_fva" of type "bool" (A binary
-           boolean), parameter "simulate_ko" of type "bool" (A binary
-           boolean), parameter "all_reversible" of type "bool" (A binary
-           boolean), parameter "fraction_of_optimum_pfba" of Double,
-           parameter "fraction_of_optimum_fva" of Double, parameter
-           "feature_ko_list" of list of type "feature_id" (A string
-           representing a feature id.), parameter "reaction_ko_list" of list
-           of type "reaction_id" (A string representing a reaction id.),
-           parameter "media_supplement_list" of list of type "compound_id" (A
-           string representing a compound id.), parameter "custom_bound_list"
-           of list of type "CustomBounds" -> structure: parameter
+           type "bool" (A binary boolean), parameter "fba_type" of String,
+           parameter "fva" of type "bool" (A binary boolean), parameter
+           "loopless_fva" of type "bool" (A binary boolean), parameter
+           "simulate_ko" of type "bool" (A binary boolean), parameter
+           "all_reversible" of type "bool" (A binary boolean), parameter
+           "fraction_of_optimum_pfba" of Double, parameter
+           "fraction_of_optimum_fva" of Double, parameter "feature_ko_list"
+           of list of type "feature_id" (A string representing a feature
+           id.), parameter "reaction_ko_list" of list of type "reaction_id"
+           (A string representing a reaction id.), parameter
+           "media_supplement_list" of list of type "compound_id" (A string
+           representing a compound id.), parameter "custom_bound_list" of
+           list of type "CustomBounds" -> structure: parameter
            "custom_reaction_id" of type "reaction_id" (A string representing
            a reaction id.), parameter "custom_lb" of Double, parameter
            "custom_ub" of Double, parameter "objective_fraction" of Double,

@@ -163,38 +163,34 @@
          "id" : "fva"
       },
       {
-         "text_options" : {
-            "valid_ws_types" : []
-         },
-         "checkbox_options" : {
-            "unchecked_value" : 0,
-            "checked_value" : 1
-         },
-         "default_values" : [
-            "1"
-         ],
-         "advanced" : true,
-         "id" : "minimize_flux",
-         "allow_multiple" : false,
-         "optional" : false,
-         "field_type" : "checkbox"
-      },
-      {
-         "text_options" : {
-            "valid_ws_types" : []
-         },
-         "checkbox_options" : {
-            "unchecked_value" : 0,
-            "checked_value" : 1
-         },
-         "default_values" : [
-            "0"
-         ],
-         "advanced" : true,
-         "id" : "loopless_fba",
-         "allow_multiple" : false,
-         "optional" : false,
-         "field_type" : "checkbox"
+         "id": "fba_type",
+         "optional": false,
+         "advanced": true,
+         "allow_multiple": false,
+         "default_values": [ "pFBA" ],
+         "field_type": "dropdown",
+         "dropdown_options": {
+            "options": [
+               {
+                  "value": "pFBA",
+                  "display": "pFBA",
+                  "id": "pFBA",
+                  "ui_name": "pFBA"
+               },
+               {
+                  "value": "Loopless FBA",
+                  "display": "Loopless FBA",
+                  "id": "Loopless FBA",
+                  "ui_name": "Loopless FBA"
+               },
+               {
+                  "value": "FBA",
+                  "display": "FBA",
+                  "id": "FBA",
+                  "ui_name": "FBA"
+               }
+            ]
+         }
       },
       {
          "text_options" : {
@@ -541,12 +537,8 @@
                "target_property" : "fva"
             },
             {
-               "input_parameter" : "minimize_flux",
-               "target_property" : "minimize_flux"
-            },
-            {
-               "input_parameter" : "loopless_fba",
-               "target_property" : "loopless_fba"
+               "input_parameter" : "fba_type",
+               "target_property" : "fba_type"
             },
             {
                "input_parameter" : "loopless_fva",

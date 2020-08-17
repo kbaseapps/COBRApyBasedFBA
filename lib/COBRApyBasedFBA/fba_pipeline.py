@@ -358,7 +358,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                 for rct_id in df.index.get_level_values(1)]
 
         df['FLUX'] = df['FLUX'].apply(lambda x: round(x, 6))
-        df['PERCENT'] = df['PERCENT'].apply(lambda x: round(x, 6))
+        df['PERCENT'] = df['PERCENT'].apply(lambda x: f'{round(x, 2)}%')
         df['SIDE']= df.index.get_level_values(0)
         df['NAME_ID'] = [rct.name + f'\n({rct_id})' for rct, rct_id in rcts]
         df['REACTION_STRING'] = [rct.build_reaction_string(use_metabolite_names=True)
@@ -389,7 +389,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                {'name': 'Media',                    'value': media_id},
                                {'name': 'Optimization status',      'value': fba_sol.status},
                                {'name': 'Objective',                'value': model.objective},
-                               {'name': 'Objective value',          'value': fba_sol.objective_value},
+                               {'name': 'Target objective value',   'value': round(fba_sol.fluxes[pipeline.target_reaction], 6)},
                                {'name': 'Number of reactions',      'value': len(model.reactions)},
                                {'name': 'Number of compounds',      'value': len(model.metabolites)},
                                {'name': 'FBA type',                 'value': 'pFBA' if pipeline.is_pfba else 'FBA'},

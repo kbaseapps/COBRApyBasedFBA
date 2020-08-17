@@ -15,9 +15,6 @@ class FBAPipeline:
     UPTAKE_ATOMS = ('C', 'N', 'P', 'S', 'O')
     
     def __init__(self):
-        # If true, run FVA algorithm on model.
-        self.is_run_fva = False
-
         # If true, make all reactions in model reversible.
         self.is_all_reversible = False
 
@@ -25,11 +22,11 @@ class FBAPipeline:
         # to determine the set of the essential genes.
         self.is_single_ko = False
 
-        # Sets FBA type, either 'pFBA', 'loopless FBA' or 'FBA'
+        # Sets FBA type. Either 'pFBA', 'Loopless FBA' or 'FBA'
         self.fba_type = 'pFBA'
 
-        # If true, run loopless FVA with CycleFreeFlux.
-        self.is_loopless_fva = False
+        # Sets FVA type. Either 'FVA', 'Loopless FVA' or 'Neither'
+        self.fva_type = 'FVA'
 
         # If true, the objective will be minimized.
         # Otherwise the objective is maximized.
@@ -89,10 +86,9 @@ class FBAPipeline:
 
         # Optimization and algorithmic params
         p.solver = params['solver']
-        p.is_run_fva = params['fva']
         p.fba_type = params['fba_type']
+        p.fva_type = params['fva_type']
         p.is_single_ko = params['simulate_ko']
-        p.is_loopless_fva = params['loopless_fva']
         p.target_reaction = params['target_reaction']
         p.is_all_reversible = params['all_reversible']
         p.is_minimize_objective = params['minimize_objective']
@@ -133,7 +129,7 @@ class FBAPipeline:
         # Only add constraints when user specifies to, otherwise max_uptakes will be None
         constrs = {atom: 0. for atom in self.UPTAKE_ATOMS if self.max_uptakes[atom] is not None}
 
-        # Return early if user doesn't specifies any max uptakes
+        # Return early if user doesn't specify any max uptakes
         if not constrs:
             return
 
@@ -213,10 +209,10 @@ class FBAPipeline:
 
         # If specified, compute FVA solution
         fva_sol = None
-        if self.is_run_fva:
+        if self.fva_type != 'Neither':
             from cobra.flux_analysis import flux_variability_analysis as fva
             fva_sol = fva(model,
-                          loopless=self.is_loopless_fva,
+                          loopless=self.fva_type == 'Loopless FVA',
                           fraction_of_optimum=self.fraction_of_optimum_fva)
         
         # If specified, simulate all single gene knockouts
@@ -413,7 +409,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                {'name': 'Number of reactions',      'value': len(model.reactions)},
                                {'name': 'Number of compounds',      'value': len(model.metabolites)},
                                {'name': 'FBA type',                 'value': pipeline.fba_type},
-                               {'name': 'Loopless FVA',             'value': yes_no_format(pipeline.is_loopless_fva)},
+                               {'name': 'FVA type',                 'value': pipeline.fva_type},
                                {'name': 'FVA fraction of opt.',     'value': pipeline.fraction_of_optimum_fva},
                                {'name': 'All reversible reactions', 'value': yes_no_format(pipeline.is_all_reversible)},
                                {'name': 'Single gene KO',           'value': yes_no_format(pipeline.is_single_ko)},

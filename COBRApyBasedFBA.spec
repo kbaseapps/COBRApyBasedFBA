@@ -69,8 +69,7 @@ module COBRApyBasedFBA {
         
         bool minimize_objective;
         string fba_type;
-        bool fva;
-        bool loopless_fva;
+        string fva_type;
         bool simulate_ko;
         bool all_reversible;
 
@@ -81,9 +80,7 @@ module COBRApyBasedFBA {
         list<reaction_id> reaction_ko_list;
         list<compound_id> media_supplement_list;
         list<CustomBounds> custom_bound_list;
-        
-        float objective_fraction;
-        
+
         float max_c_uptake;
         float max_n_uptake;
         float max_p_uptake;

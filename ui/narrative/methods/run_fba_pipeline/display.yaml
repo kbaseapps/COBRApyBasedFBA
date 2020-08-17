@@ -55,15 +55,15 @@ parameters :
 
     fba_type :
         ui-name : |
-            FBA type?
+            FBA type
         short-hint : |
             Select between pFBA, loopless FBA with the CycleFreeFlux algorithm or regular FBA.
 
-    loopless_fva :
+    fva_type :
         ui-name : |
-            Run loopless FVA?
+            FVA type
         short-hint : |
-            Check this box to run loopless FVA with the CycleFreeFlux algorithm.
+            Minimize and maximize all reaction fluxes, enabling reaction classification. Select between regular FVA or loopless FVA with the CycleFreeFlux algorithm. Select Neither to skip FVA.
 
     fraction_of_optimum_pfba :
         ui-name : |
@@ -122,12 +122,6 @@ parameters :
             The fluxes for all reactions in the metabolic model and the predicted growth of biomass according to the FBA model.
         placeholder : |
             ID for saving FBA results
-
-    fva :
-        ui-name : |
-            Flux Variability Analysis?
-        short-hint : |
-            Check this box to conduct the Flux Variability Analysis. Minimize and maximize all reaction fluxes, enabling reaction classification.
 
     target_reaction :
         ui-name : |

@@ -31,7 +31,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "ff2701ded292e9c2bd10cf1e44cfd9ef1a4a339e"
+    GIT_COMMIT_HASH = "f9818411464b551194d0a42a0f007d36ddeb6d6d"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -70,25 +70,22 @@ class COBRApyBasedFBA:
            "workspace_name" (A string representing a workspace name.),
            parameter "solver" of String, parameter "minimize_objective" of
            type "bool" (A binary boolean), parameter "fba_type" of String,
-           parameter "fva" of type "bool" (A binary boolean), parameter
-           "loopless_fva" of type "bool" (A binary boolean), parameter
-           "simulate_ko" of type "bool" (A binary boolean), parameter
-           "all_reversible" of type "bool" (A binary boolean), parameter
-           "fraction_of_optimum_pfba" of Double, parameter
-           "fraction_of_optimum_fva" of Double, parameter "feature_ko_list"
-           of list of type "feature_id" (A string representing a feature
-           id.), parameter "reaction_ko_list" of list of type "reaction_id"
-           (A string representing a reaction id.), parameter
-           "media_supplement_list" of list of type "compound_id" (A string
-           representing a compound id.), parameter "custom_bound_list" of
-           list of type "CustomBounds" -> structure: parameter
+           parameter "fva_type" of String, parameter "simulate_ko" of type
+           "bool" (A binary boolean), parameter "all_reversible" of type
+           "bool" (A binary boolean), parameter "fraction_of_optimum_pfba" of
+           Double, parameter "fraction_of_optimum_fva" of Double, parameter
+           "feature_ko_list" of list of type "feature_id" (A string
+           representing a feature id.), parameter "reaction_ko_list" of list
+           of type "reaction_id" (A string representing a reaction id.),
+           parameter "media_supplement_list" of list of type "compound_id" (A
+           string representing a compound id.), parameter "custom_bound_list"
+           of list of type "CustomBounds" -> structure: parameter
            "custom_reaction_id" of type "reaction_id" (A string representing
            a reaction id.), parameter "custom_lb" of Double, parameter
-           "custom_ub" of Double, parameter "objective_fraction" of Double,
-           parameter "max_c_uptake" of Double, parameter "max_n_uptake" of
-           Double, parameter "max_p_uptake" of Double, parameter
-           "max_s_uptake" of Double, parameter "max_o_uptake" of Double,
-           parameter "default_max_uptake" of Double
+           "custom_ub" of Double, parameter "max_c_uptake" of Double,
+           parameter "max_n_uptake" of Double, parameter "max_p_uptake" of
+           Double, parameter "max_s_uptake" of Double, parameter
+           "max_o_uptake" of Double, parameter "default_max_uptake" of Double
         :returns: instance of type "RunFBAPipelineResults" -> structure:
            parameter "new_fba_ref" of type "ws_fba_id" (The workspace ID for
            a FBA data object. @id ws KBaseFBA.FBA), parameter "objective" of

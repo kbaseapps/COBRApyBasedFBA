@@ -243,7 +243,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
     # Helper functions for formating
     yes_no_format = lambda x: 'Yes' if x else 'No'
-    nan_format = lambda x: x if x else 'NaN'
+    missing_format = lambda x: x if x else '-'
 
     # Helper function to determine reaction class
     def class_formater(rct_id):
@@ -281,7 +281,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                             'max_flux': round(fva_sol.maximum[rct_id], 6),
                             'class': class_formater(rct_id),
                             'equation': rct.build_reaction_string(use_metabolite_names=True),
-                            'name': nan_format(rct.name)}
+                            'name': missing_format(rct.name)}
                            for rct_id, rct in zip(rct_ids, rcts)])
 
     def model_summary(model):
@@ -291,7 +291,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
         def rct_name(rct_id):
             if rct_id is np.nan:
-                return 'nan'
+                return '-'
 
             try:
                 name = model.reactions.get_by_id('EX_' + rct_id).name
@@ -314,8 +314,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
             else:
                 return name + f'\n({rct_id})'
 
-            # TODO: what to print here? could not find rct in reactions, ex_rcts or metabolites
-            return 'nan'
+            return '-'
 
 
         df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(rct_name)
@@ -391,7 +390,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         if not essential_genes:
             return json.dumps([])
 
-        return json.dumps([{'name': nan_format(gene.id),
+        return json.dumps([{'name': missing_format(gene.id),
                             'essential': yes_no_format(gene in essential_genes)}
                           for gene in model.genes])
 

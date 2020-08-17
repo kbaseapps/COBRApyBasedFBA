@@ -381,6 +381,10 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
     atp_summary, is_atp_summary = atp_summary_formatter(model)
 
+    # Formating for objective value
+    obj_value = round(fba_sol.fluxes[pipeline.target_reaction], 6)
+    obj_units = 'gm/gm CDW hr' if 'biomass' in pipeline.target_reaction else 'mmol/gm CDW hr'
+
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
 
     context = {'summary':     model_summary(model),
@@ -389,7 +393,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                {'name': 'Media',                    'value': media_id},
                                {'name': 'Optimization status',      'value': fba_sol.status},
                                {'name': 'Objective',                'value': model.objective},
-                               {'name': 'Target objective value',   'value': round(fba_sol.fluxes[pipeline.target_reaction], 6)},
+                               {'name': 'Target objective value',   'value': f'{obj_value} ({obj_units})'},
                                {'name': 'Number of reactions',      'value': len(model.reactions)},
                                {'name': 'Number of compounds',      'value': len(model.metabolites)},
                                {'name': 'FBA type',                 'value': 'pFBA' if pipeline.is_pfba else 'FBA'},

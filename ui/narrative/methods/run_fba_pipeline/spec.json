@@ -176,6 +176,19 @@
          }
       },
       {
+         "id" : "fraction_of_optimum_pfba",
+         "default_values" : ["1.0"],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : false,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
+         }
+      },
+      {
          "id": "fva_type",
          "optional": false,
          "advanced": true,
@@ -203,6 +216,19 @@
                   "ui_name": "Neither"
                }
             ]
+         }
+      },
+      {
+         "id" : "fraction_of_optimum_fva",
+         "default_values" : ["0.1"],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : false,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
          }
       },
       {
@@ -238,32 +264,6 @@
          "allow_multiple" : false,
          "optional" : false,
          "id" : "all_reversible"
-      },
-      {
-         "id" : "fraction_of_optimum_pfba",
-         "default_values" : ["1.0"],
-         "advanced" : true,
-         "field_type" : "text",
-         "allow_multiple" : false,
-         "optional" : false,
-         "text_options" : {
-            "validate_as" : "float",
-            "min_float": 0,
-            "max_float": 1
-         }
-      },
-      {
-         "id" : "fraction_of_optimum_fva",
-         "default_values" : ["0.1"],
-         "advanced" : true,
-         "field_type" : "text",
-         "allow_multiple" : false,
-         "optional" : false,
-         "text_options" : {
-            "validate_as" : "float",
-            "min_float": 0,
-            "max_float": 1
-         }
       },
       {
          "id" : "feature_ko_list",

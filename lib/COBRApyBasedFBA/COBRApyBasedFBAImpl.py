@@ -47,6 +47,7 @@ class COBRApyBasedFBA:
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
         self.dfu = DataFileUtil(self.callback_url)
+        self.config = config
 
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
@@ -114,7 +115,7 @@ class COBRApyBasedFBA:
         params['media_workspace'] = params['workspace']
 
         # TODO: toggle dev=False when we test on production
-        kbase = cobrakbase.KBaseAPI(ctx['token'], dev=True)
+        kbase = cobrakbase.KBaseAPI(ctx['token'], config=self.config)
         ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
         fbamodel_json = kbase.get_object(ref.id, ref.workspace_id)
         fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)

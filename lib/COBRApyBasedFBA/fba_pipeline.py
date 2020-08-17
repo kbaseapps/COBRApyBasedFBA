@@ -231,13 +231,14 @@ class FBAPipeline:
                               find_essential_genes(model, threshold=1e-11)
 
         # Convert COBRApy model to kbase format
-        fba_builder = KBaseFBABuilder.fromCobra(self.output_id,
-                                                model,
-                                                fba_sol,
-                                                media,
-                                                self.workspace)
+        fba_builder = KBaseFBABuilder.from_cobra(self.output_id,
+                                                 model,
+                                                 fba_sol,
+                                                 media,
+                                                 self.workspace)
         
         # TODO: add fva_sol and essential_genes to this object in cobrakbase
+        fba_builder.with_cobra_fva_solution(fva_sol)
         return fba_builder.build(), fva_sol, fba_sol, essential_genes
 
 def build_report(pipeline, model, fba_sol, fva_sol,

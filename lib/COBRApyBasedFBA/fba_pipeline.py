@@ -1,6 +1,7 @@
 import math
 import cobra
 import cobrakbase
+import numpy as np
 import pandas as pd
 from cobrakbase.modelseed.utils import atom_count
 from cobrakbase.core.kbase_fba_builder import KBaseFBABuilder
@@ -287,7 +288,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                            for rct_id, rct in zip(rct_ids, rcts)])
 
     def model_summary(model):
-        import numpy as np
 
         df = model.summary().to_frame()
 

@@ -244,6 +244,8 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     # Helper functions for formating
     yes_no_format = lambda x: 'Yes' if x else 'No'
     missing_format = lambda x: x if x else '-'
+    nan_format = lambda x: '-' if x == np.nan else x
+    round_format = lambda x: nan_format(round(x, 6))
 
     # Helper function to determine reaction class
     def class_formater(rct_id):
@@ -276,11 +278,11 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         rcts = map(model.reactions.get_by_id, rct_ids)
 
         return json.dumps([{'id': rct_id,
-                            'flux': round(fba_sol.fluxes[rct_id], 6),
-                            'min_flux': round(fva_sol.minimum[rct_id], 6),
-                            'max_flux': round(fva_sol.maximum[rct_id], 6),
+                            'flux': round_format(fba_sol.fluxes[rct_id]),
+                            'min_flux': round_format(fva_sol.minimum[rct_id]),
+                            'max_flux': round_format(fva_sol.maximum[rct_id]),
                             'class': class_formater(rct_id),
-                            'equation': rct.build_reaction_string(use_metabolite_names=True),
+                            'equation': round_float_str(rct.build_reaction_string(use_metabolite_names=True)),
                             'name': missing_format(rct.name)}
                            for rct_id, rct in zip(rct_ids, rcts)])
 
@@ -316,13 +318,12 @@ def build_report(pipeline, model, fba_sol, fva_sol,
 
             return '-'
 
-
         df[('IN_FLUXES',  'ID')] = df[('IN_FLUXES',    'ID')].apply(rct_name)
-        df[('IN_FLUXES',  'FLUX')] = df[('IN_FLUXES',  'FLUX')].apply(lambda x: round(x, 6))
+        df[('IN_FLUXES',  'FLUX')] = df[('IN_FLUXES',  'FLUX')].apply(round_format)
         df[('OUT_FLUXES', 'ID')] = df[('OUT_FLUXES',   'ID')].apply(rct_name)
-        df[('OUT_FLUXES', 'FLUX')] = df[('OUT_FLUXES', 'FLUX')].apply(lambda x: round(x, 6))
+        df[('OUT_FLUXES', 'FLUX')] = df[('OUT_FLUXES', 'FLUX')].apply(round_format)
         df[('OBJECTIVES', 'ID')] = df[('OBJECTIVES',   'ID')].apply(rct_name)
-        df[('OBJECTIVES', 'FLUX')] = df[('OBJECTIVES', 'FLUX')].apply(lambda x: round(x, 6))
+        df[('OBJECTIVES', 'FLUX')] = df[('OBJECTIVES', 'FLUX')].apply(round_format)
 
         summary = []
         for row in df.itertuples():
@@ -372,7 +373,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
         rcts = [(model.reactions.get_by_id(rct_id), rct_id)
                 for rct_id in df.index.get_level_values(1)]
 
-        df['FLUX'] = df['FLUX'].apply(lambda x: round(x, 6))
+        df['FLUX'] = df['FLUX'].apply(round_format)
         df['PERCENT'] = df['PERCENT'].apply(lambda x: f'{round(x, 2)}%')
         df['SIDE']= df.index.get_level_values(0)
         df['NAME_ID'] = [rct.name + f'\n({rct_id})' for rct, rct_id in rcts]
@@ -397,7 +398,7 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     atp_summary, is_atp_summary = atp_summary_formatter(model)
 
     # Formating for objective value
-    obj_value = round(fba_sol.fluxes[pipeline.target_reaction], 6)
+    obj_value = round_format(fba_sol.fluxes[pipeline.target_reaction])
     obj_units = 'gm/gm CDW hr' if 'biomass' in pipeline.target_reaction else 'mmol/gm CDW hr'
 
     # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)

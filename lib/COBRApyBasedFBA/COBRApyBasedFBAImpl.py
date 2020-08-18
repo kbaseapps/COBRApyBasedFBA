@@ -138,7 +138,7 @@ class COBRApyBasedFBA:
         os.makedirs(html_report_folder, exist_ok=True)
         with open(os.path.join(html_report_folder, 'view.html'), 'w') as f:
             f.write(build_report(pipeline, model, fba_sol, fva_sol, essential_genes,
-                                 params['fbamodel_id'], params['media_id']))
+                                 result.fbamodel_ref, result.media_ref))
 
         report_shock_id = self.dfu.file_to_shock({'file_path': html_report_folder,
                                                   'pack': 'zip'})['shock_id']

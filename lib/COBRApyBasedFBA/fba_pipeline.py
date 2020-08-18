@@ -397,8 +397,6 @@ def build_report(pipeline, model, fba_sol, fva_sol,
     obj_value = round_format(fba_sol.fluxes[pipeline.target_reaction])
     obj_units = 'gm/gm CDW hr' if 'biomass' in pipeline.target_reaction else 'mmol/gm CDW hr'
 
-    # TODO: Get model_id, media_id from cobrokbase (currently they are kbase object ref)
-
     context = {'summary':     model_summary(model),
                'atp_summary': {'is_atp_summary': is_atp_summary, 'summary': atp_summary},
                'overview':    [{'name': 'Model',                    'value': model_id},

@@ -1,7 +1,7 @@
 #
 # Define basic display information
 #
-name     : Run Flux Balance Analysis (COBRApy)
+name     : Flux Balance Analysis (COBRApy)
 
 tooltip  : |
     Predict metabolite fluxes in a metabolic model of an organism grown on a given media using flux balance analysis (FBA).
@@ -35,13 +35,47 @@ parameters :
         placeholder : |
             Model for FBA
 
-
-    minimize_flux :
+    solver :
         ui-name : |
-            Minimize Flux?
+            Backend optimization solver
         short-hint : |
-            Check this box to minize the sum of all fluxes *after* the primary objective function has been optimized.
+            Select optimization solver to use. The open source solvers [GLPK, COINOR-CBC] are available.
 
+    all_reversible :
+        ui-name : |
+            Make all reactions reversible?
+        short-hint : |
+            Check this box to make all reactions in the model reversible.
+
+    minimize_objective :
+        ui-name : |
+            Minimize model objective?
+        short-hint : |
+            Check this box to minimize the model objective. If unchecked, objective will be maximized.
+
+    fba_type :
+        ui-name : |
+            FBA type
+        short-hint : |
+            Select between pFBA, loopless FBA with the CycleFreeFlux algorithm or regular FBA.
+
+    fva_type :
+        ui-name : |
+            FVA type
+        short-hint : |
+            Minimize and maximize all reaction fluxes, enabling reaction classification. Select between regular FVA or loopless FVA with the CycleFreeFlux algorithm. Select Neither to skip FVA.
+
+    fraction_of_optimum_pfba :
+        ui-name : |
+            Fraction of optimum for pFBA
+        short-hint : |
+            Sets fraction of optimum for parsimonious FBA (pFBA). Value must be between 0 and 1, defaults to 1.
+
+    fraction_of_optimum_fva :
+        ui-name : |
+            Fraction of optimum for FVA
+        short-hint : |
+            Sets fraction of optimum for Flux Variability Analysis (FVA). Value must be between 0 and 1, defaults to 0.1.
 
     max_c_uptake :
         ui-name : |
@@ -49,13 +83,11 @@ parameters :
         short-hint : |
             Maximum number of total moles of carbon permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
 
-
     feature_ko_list :
         ui-name : |
             Gene Knockouts
         short-hint : |
             User may add gene knockout information one at a time using “add another gene knockout” button. Gene IDs should be in the same format that appears in your metabolic model (e.g., kb|g.220339.CDS.2927).
-
 
     media_id :
         ui-name : |
@@ -64,7 +96,6 @@ parameters :
             Media specifies the set of chemical compounds an organism can use for its growth. If left blank, the default Complete media is used. The “Complete” media is an abstraction of what is available in our biochemistry database. Every compound that can be transported from the extracellular compartment into the cell–or, in other words, for which a transport reaction is available–is used in the Complete media. This list is built in real-time, meaning that whenever you run FBA with Complete media, the available transporters are parsed from the media database–and is therefore not stored permanently in any media object in the workspace.
         placeholder : |
             Growth condition for FBA
-
 
     simulate_ko :
         ui-name : |
@@ -78,13 +109,11 @@ parameters :
         short-hint : |
             Maximum number of total moles of sulfur permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
 
-
     max_p_uptake :
         ui-name : |
             Max phosphate uptake
         short-hint : |
             Maximum number of total moles of phosphate permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
-
 
     fba_output_id :
         ui-name : |
@@ -94,15 +123,9 @@ parameters :
         placeholder : |
             ID for saving FBA results
 
-    fva :
-        ui-name : |
-            Flux Variability Analysis?
-        short-hint : |
-            Check this box to conduct the Flux Variability Analysis. Minimize and maximize all reaction fluxes, enabling reaction classification.
-
     target_reaction :
         ui-name : |
-            Reaction to maximize
+            Reaction to optimize
         short-hint : |
             ID of reaction flux to maximize in FBA. Only one reaction can be selected. First you must deselect the default reaction ‘bio1’ and then select the desired target reaction to maximize. You may use the search box to search through the available reactions in your model.
 
@@ -130,13 +153,44 @@ parameters :
         short-hint : |
             Maximum number of total moles of nitrogen permitted for uptake (default uptake rates vary from 0 to 100 for all nutrients).
 
+    default_max_uptake :
+        ui-name : |
+            Default max uptake
+        short-hint : |
+            Every exchange flux has a lower bound of negative *Default max uptake*. If complete media, default is 100. Otherwise default is 0.
+
+    custom_reaction_id :
+        ui-name : |
+            Reaction id
+        short-hint : |
+            Reaction id to add custom bound to.
+
+    custom_lb :
+        ui-name : |
+            Lower bound
+        short-hint : |
+            Custom lower bound for the reaction.
+
+    custom_ub :
+        ui-name : |
+            Upper bound
+        short-hint : |
+            Custom upper bound for the reaction.
+
+parameter-groups:
+    custom_bound_list:
+        ui-name: |
+            Custom reaction bounds
+        short-hint: |
+            Custom reaction bounds to add to the model.
+
 icon: fba-teal.png
 
 description : |
 
     <p>This App constructs a model of how metabolites flow through the metabolic network of a microbe or a plant. Flux Balance Analysis (FBA) is a constraint-based approach that estimates growth-optimal fluxes through all reactions in the metabolic network, thereby making it possible to estimate the growth rate of an organism (the rate of biomass production) or the rate of production of a given metabolic output on a specified media.This App allows you to analyze the organism's growth on different substrates and to evaluate the reactions and metabolites that carry fluxes in each growth condition.</p>
 
-    <p>The <i>Run Flux Balance Analysis</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
+    <p>The <i>Flux Balance Analysis (COBRApy)</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
 
     <p>The “media formulation,” or <a href=”https://narrative.kbase.us/#spec/type/KBaseBiochem.Media”>“Media typed object,”</a>  contains the chemical compounds on which to analyze the growth of your organism. KBase provides users with more than 500 commonly used media conditions to use when running FBA. Importing a media formulation into your Narrative is discussed in Step 1 of the point and click instructions below.</p>
 

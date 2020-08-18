@@ -9,6 +9,20 @@
       "input" : null,
       "output" : "kbaseTabTable"
    },
+   "parameter-groups": [
+     {
+         "id": "custom_bound_list",
+         "parameters": [
+             "custom_reaction_id",
+             "custom_lb",
+             "custom_ub"
+         ],
+         "optional": true,
+         "advanced": false,
+         "allow_multiple": true,
+         "with_border": true
+     }
+   ],
    "parameters" : [
       {
          "text_options" : {
@@ -78,6 +92,28 @@
       },
       {
          "default_values" : [
+            "glpk"
+         ],
+         "advanced" : true,
+         "id" : "solver",
+         "optional" : false,
+         "allow_multiple" : false,
+         "field_type" : "dropdown",
+         "dropdown_options":{
+            "options": [
+               {
+                 "value": "coinor_cbc",
+                 "display": "COINOR-CBC"
+               },
+               {
+                 "value": "glpk",
+                 "display": "GLPK"
+               }
+            ]
+         }
+      },
+      {
+         "default_values" : [
             ""
          ],
          "advanced" : false,
@@ -93,38 +129,107 @@
          }
       },
       {
-         "default_values" : [
-            "1"
-         ],
          "advanced" : true,
+         "default_values" : [
+            "0"
+         ],
          "checkbox_options" : {
-            "unchecked_value" : 0,
-            "checked_value" : 1
+            "checked_value" : 1,
+            "unchecked_value" : 0
          },
          "text_options" : {
             "valid_ws_types" : []
          },
+         "field_type" : "checkbox",
          "allow_multiple" : false,
          "optional" : false,
-         "field_type" : "checkbox",
-         "id" : "fva"
+         "id" : "minimize_objective"
       },
       {
-         "text_options" : {
-            "valid_ws_types" : []
-         },
-         "checkbox_options" : {
-            "unchecked_value" : 0,
-            "checked_value" : 1
-         },
-         "default_values" : [
-            "1"
-         ],
+         "id": "fba_type",
+         "optional": false,
+         "advanced": true,
+         "allow_multiple": false,
+         "default_values": [ "pFBA" ],
+         "field_type": "dropdown",
+         "dropdown_options": {
+            "options": [
+               {
+                  "value": "pFBA",
+                  "display": "pFBA",
+                  "id": "pFBA",
+                  "ui_name": "pFBA"
+               },
+               {
+                  "value": "Loopless FBA",
+                  "display": "Loopless FBA",
+                  "id": "Loopless FBA",
+                  "ui_name": "Loopless FBA"
+               },
+               {
+                  "value": "FBA",
+                  "display": "FBA",
+                  "id": "FBA",
+                  "ui_name": "FBA"
+               }
+            ]
+         }
+      },
+      {
+         "id" : "fraction_of_optimum_pfba",
+         "default_values" : ["1.0"],
          "advanced" : true,
-         "id" : "minimize_flux",
+         "field_type" : "text",
          "allow_multiple" : false,
          "optional" : false,
-         "field_type" : "checkbox"
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
+         }
+      },
+      {
+         "id": "fva_type",
+         "optional": false,
+         "advanced": true,
+         "allow_multiple": false,
+         "default_values": [ "FVA" ],
+         "field_type": "dropdown",
+         "dropdown_options": {
+            "options": [
+               {
+                  "value": "FVA",
+                  "display": "FVA",
+                  "id": "FVA",
+                  "ui_name": "FVA"
+               },
+               {
+                  "value": "Loopless FVA",
+                  "display": "Loopless FVA",
+                  "id": "Loopless FVA",
+                  "ui_name": "Loopless FVA"
+               },
+               {
+                  "value": "Neither",
+                  "display": "Neither",
+                  "id": "Neither",
+                  "ui_name": "Neither"
+               }
+            ]
+         }
+      },
+      {
+         "id" : "fraction_of_optimum_fva",
+         "default_values" : ["0.1"],
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : false,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 1
+         }
       },
       {
          "advanced" : true,
@@ -142,6 +247,23 @@
          "allow_multiple" : false,
          "optional" : false,
          "id" : "simulate_ko"
+      },
+      {
+         "advanced" : true,
+         "default_values" : [
+            "0"
+         ],
+         "checkbox_options" : {
+            "checked_value" : 1,
+            "unchecked_value" : 0
+         },
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "field_type" : "checkbox",
+         "allow_multiple" : false,
+         "optional" : false,
+         "id" : "all_reversible"
       },
       {
          "id" : "feature_ko_list",
@@ -205,6 +327,58 @@
          "field_type" : "textsubdata"
       },
       {
+         "id" : "custom_reaction_id",
+         "field_type" : "textsubdata",
+         "allow_multiple" : false,
+         "optional" : true,
+         "advanced" : false,
+         "default_values" : [""],
+         "text_options" : {
+            "valid_ws_types" : []
+         },
+         "textsubdata_options" : {
+            "show_src_obj" : false,
+            "allow_custom" : false,
+            "multiselection" : false,
+            "subdata_selection" : {
+               "subdata_included" : [
+                  "modelreactions/[*]/id",
+                  "modelreactions/[*]/name"
+               ],
+               "selection_description" : [
+                  "name"
+               ],
+               "selection_id" : "id",
+               "path_to_subdata" : [
+                  "modelreactions"
+               ],
+               "parameter_id" : "fbamodel_id"
+            }
+         }
+      },
+      {
+         "id" : "custom_lb",
+         "default_values" : [""],
+         "advanced" : false,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float"
+         }
+      },
+      {
+         "id" : "custom_ub",
+         "default_values" : [""],
+         "advanced" : false,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float"
+         }
+      },
+      {
          "allow_multiple" : true,
          "optional" : true,
          "field_type" : "textsubdata",
@@ -238,25 +412,25 @@
       },
       {
          "id" : "max_c_uptake",
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "advanced" : true,
          "field_type" : "text",
          "allow_multiple" : false,
          "optional" : true,
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          }
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "advanced" : true,
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "id" : "max_n_uptake",
          "field_type" : "text",
          "allow_multiple" : false,
@@ -264,41 +438,56 @@
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "allow_multiple" : false,
          "optional" : true,
          "field_type" : "text",
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "id" : "max_p_uptake",
          "advanced" : true
       },
       {
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          },
          "id" : "max_s_uptake",
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "advanced" : true,
          "field_type" : "text",
          "optional" : true,
          "allow_multiple" : false
       },
       {
-         "default_values" : [
-            ""
-         ],
+         "default_values" : [""],
          "id" : "max_o_uptake",
          "advanced" : true,
          "field_type" : "text",
          "allow_multiple" : false,
          "optional" : true,
          "text_options" : {
-            "validate_as" : "float"
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
+         }
+      },
+      {
+         "default_values" : [
+            "0"
+         ],
+         "id" : "default_max_uptake",
+         "advanced" : true,
+         "field_type" : "text",
+         "allow_multiple" : false,
+         "optional" : true,
+         "text_options" : {
+            "validate_as" : "float",
+            "min_float": 0,
+            "max_float": 100
          }
       }
    ],
@@ -332,16 +521,36 @@
                "target_property" : "fba_output_id"
             },
             {
-               "input_parameter" : "fva",
-               "target_property" : "fva"
+               "input_parameter" : "solver",
+               "target_property" : "solver"
             },
             {
-               "input_parameter" : "minimize_flux",
-               "target_property" : "minimize_flux"
+               "input_parameter" : "minimize_objective",
+               "target_property" : "minimize_objective"
+            },
+            {
+               "input_parameter" : "fba_type",
+               "target_property" : "fba_type"
+            },
+            {
+               "input_parameter" : "fraction_of_optimum_pfba",
+               "target_property" : "fraction_of_optimum_pfba"
+            },
+            {
+               "input_parameter" : "fva_type",
+               "target_property" : "fva_type"
+            },
+            {
+               "input_parameter" : "fraction_of_optimum_fva",
+               "target_property" : "fraction_of_optimum_fva"
             },
             {
                "input_parameter" : "simulate_ko",
                "target_property" : "simulate_ko"
+            },
+            {
+               "input_parameter" : "all_reversible",
+               "target_property" : "all_reversible"
             },
             {
                "target_property" : "feature_ko_list",
@@ -350,6 +559,10 @@
             {
                "target_property" : "reaction_ko_list",
                "input_parameter" : "reaction_ko_list"
+            },
+            {
+               "target_property" : "custom_bound_list",
+               "input_parameter" : "custom_bound_list"
             },
             {
                "target_property" : "media_supplement_list",
@@ -374,21 +587,25 @@
             {
                "target_property" : "max_o_uptake",
                "input_parameter" : "max_o_uptake"
+            },
+            {
+               "target_property" : "default_max_uptake",
+               "input_parameter" : "default_max_uptake"
             }
          ],
          "output_mapping" : [
             {
-				"service_method_output_path": [0, "report_name"],
-				"target_property": "report_name"
-			},
-			{
-				"service_method_output_path": [0, "report_ref"],
-				"target_property": "report_ref"
-			},
-			{
-				"narrative_system_variable": "workspace",
-				"target_property": "workspace_name"
-			},
+            "service_method_output_path": [0, "report_name"],
+            "target_property": "report_name"
+            },
+            {
+               "service_method_output_path": [0, "report_ref"],
+               "target_property": "report_ref"
+            },
+            {
+               "narrative_system_variable": "workspace",
+               "target_property": "workspace_name"
+            },
             {
                "narrative_system_variable" : "workspace",
                "target_property" : "ws"

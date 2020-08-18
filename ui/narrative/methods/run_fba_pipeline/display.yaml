@@ -1,7 +1,7 @@
 #
 # Define basic display information
 #
-name     : Run Flux Balance Analysis (COBRApy)
+name     : Flux Balance Analysis (COBRApy)
 
 tooltip  : |
     Predict metabolite fluxes in a metabolic model of an organism grown on a given media using flux balance analysis (FBA).
@@ -190,7 +190,7 @@ description : |
 
     <p>This App constructs a model of how metabolites flow through the metabolic network of a microbe or a plant. Flux Balance Analysis (FBA) is a constraint-based approach that estimates growth-optimal fluxes through all reactions in the metabolic network, thereby making it possible to estimate the growth rate of an organism (the rate of biomass production) or the rate of production of a given metabolic output on a specified media.This App allows you to analyze the organism's growth on different substrates and to evaluate the reactions and metabolites that carry fluxes in each growth condition.</p>
 
-    <p>The <i>Run Flux Balance Analysis</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
+    <p>The <i>Flux Balance Analysis (COBRApy)</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
 
     <p>The “media formulation,” or <a href=”https://narrative.kbase.us/#spec/type/KBaseBiochem.Media”>“Media typed object,”</a>  contains the chemical compounds on which to analyze the growth of your organism. KBase provides users with more than 500 commonly used media conditions to use when running FBA. Importing a media formulation into your Narrative is discussed in Step 1 of the point and click instructions below.</p>
 

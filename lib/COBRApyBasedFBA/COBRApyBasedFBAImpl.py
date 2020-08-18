@@ -3,10 +3,12 @@
 # The header block is where all import statments should live
 import logging
 import os
+import uuid
 from pprint import pformat
 
 from installed_clients.KBaseReportClient import KBaseReport
-from COBRApyBasedFBA.fba_pipeline import FBAPipeline
+from installed_clients.DataFileUtilClient import DataFileUtil
+from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
 import cobrakbase
 #END_HEADER
@@ -29,7 +31,7 @@ class COBRApyBasedFBA:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/COBRApyBasedFBA.git"
-    GIT_COMMIT_HASH = "7c6d93244b1fb153bb9e63910bb5a02f5f8a512e"
+    GIT_COMMIT_HASH = "f9818411464b551194d0a42a0f007d36ddeb6d6d"
 
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
@@ -44,6 +46,8 @@ class COBRApyBasedFBA:
         # saved in the constructor.
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
+        self.dfu = DataFileUtil(self.callback_url)
+
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
         #END_CONSTRUCTOR
@@ -65,14 +69,11 @@ class COBRApyBasedFBA:
            string representing a FBA id.), parameter "workspace" of type
            "workspace_name" (A string representing a workspace name.),
            parameter "solver" of String, parameter "minimize_objective" of
-           type "bool" (A binary boolean), parameter "fva" of type "bool" (A
-           binary boolean), parameter "minimize_flux" of type "bool" (A
-           binary boolean), parameter "loopless_fba" of type "bool" (A binary
-           boolean), parameter "loopless_fva" of type "bool" (A binary
-           boolean), parameter "simulate_ko" of type "bool" (A binary
-           boolean), parameter "all_reversible" of type "bool" (A binary
-           boolean), parameter "fraction_of_optimum_pfba" of Double,
-           parameter "fraction_of_optimum_fva" of Double, parameter
+           type "bool" (A binary boolean), parameter "fba_type" of String,
+           parameter "fva_type" of String, parameter "simulate_ko" of type
+           "bool" (A binary boolean), parameter "all_reversible" of type
+           "bool" (A binary boolean), parameter "fraction_of_optimum_pfba" of
+           Double, parameter "fraction_of_optimum_fva" of Double, parameter
            "feature_ko_list" of list of type "feature_id" (A string
            representing a feature id.), parameter "reaction_ko_list" of list
            of type "reaction_id" (A string representing a reaction id.),
@@ -81,11 +82,10 @@ class COBRApyBasedFBA:
            of list of type "CustomBounds" -> structure: parameter
            "custom_reaction_id" of type "reaction_id" (A string representing
            a reaction id.), parameter "custom_lb" of Double, parameter
-           "custom_ub" of Double, parameter "objective_fraction" of Double,
-           parameter "max_c_uptake" of Double, parameter "max_n_uptake" of
-           Double, parameter "max_p_uptake" of Double, parameter
-           "max_s_uptake" of Double, parameter "max_o_uptake" of Double,
-           parameter "default_max_uptake" of Double
+           "custom_ub" of Double, parameter "max_c_uptake" of Double,
+           parameter "max_n_uptake" of Double, parameter "max_p_uptake" of
+           Double, parameter "max_s_uptake" of Double, parameter
+           "max_o_uptake" of Double, parameter "default_max_uptake" of Double
         :returns: instance of type "RunFBAPipelineResults" -> structure:
            parameter "new_fba_ref" of type "ws_fba_id" (The workspace ID for
            a FBA data object. @id ws KBaseFBA.FBA), parameter "objective" of
@@ -97,15 +97,15 @@ class COBRApyBasedFBA:
         # return variables are: results
         #BEGIN run_fba_pipeline
 
-        # TODO: for debugging
+        # TODO: for debugging. remove all prints
         print('PARAMS')
         print(params)
 
-        # TODO: temp fix. Filipe's problem
+        # TODO: temp fix. fix cobrakbase
         if params['target_reaction'] == 'bio1':
           params['target_reaction'] += '_biomass'
 
-        # TODO: this is temp fix. UI does not contain workspace. update spec
+        # TODO: temp fix. UI does not contain workspace. update spec
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
 
@@ -128,29 +128,47 @@ class COBRApyBasedFBA:
 
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object
-        result = pipeline.run(model, media)
+        result, fva_sol, fba_sol, essential_genes = pipeline.run(model, media)
         # kbase_ref is list of lists with only one inner list
         kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
-        # Step 5 - Build a Report and return
-        reportObj = {
-            'objects_created': [{'ref': f"{params['workspace']}/{params['fba_output_id']}",
-                                 'description': 'FBA'}],
-            'text_message': 'TODO: print FBA solution, etc'
+        html_report_folder = os.path.join(self.shared_folder, 'subfolder')
+        os.makedirs(html_report_folder, exist_ok=True)
+        with open(os.path.join(html_report_folder, 'view.html'), 'w') as f:
+            f.write(build_report(pipeline, model, fba_sol, fva_sol, essential_genes,
+                                 result['fbamodel_ref'], result['media_ref']))
+
+        report_shock_id = self.dfu.file_to_shock({'file_path': html_report_folder,
+                                                  'pack': 'zip'})['shock_id']
+        html_output = {
+            'name' : 'view.html',
+            'shock_id': report_shock_id
         }
 
-        report = KBaseReport(self.callback_url)
-        # TODO: create_extended_report function
-        report_info = report.create({'report': reportObj, 'workspace_name': params['workspace']})
+        # Step 5 - Build a Report and return
+        report_params = {
+            'objects_created': [{'ref': f"{params['workspace']}/{params['fba_output_id']}",
+                                 'description': 'FBA'}],
+            'workspace_name': params['workspace'],
+            'html_links': [html_output],
+            'direct_html_link_index': 0,
+            'html_window_height': 500,
+            'report_object_name': 'COBRApyBasedFBA_report_' + str(uuid.uuid4())
+        }
+
+        report = KBaseReport(self.callback_url, token=ctx['token'])
+        #report_info = report.create({'report', : report_params, 'workspace_name': params['workspace']})
+        report_info = report.create_extended_report(report_params)
 
         # Contruct the output to send back
-        results = {'report_name': report_info['name'],
-                   'report_ref': report_info['ref'],
-                   'workspace_name': params['workspace'],
-                   'ws': params['workspace'],
-                   'type': 'KBaseFBA.FBA',
-                   'obj': params['fba_output_id']
-                  }
+        results = {
+            'report_name': report_info['name'],
+            'report_ref': report_info['ref'],
+            'workspace_name': params['workspace'],
+            'ws': params['workspace'],
+            'type': 'KBaseFBA.FBA',
+            'obj': params['fba_output_id']
+        }
 
         #END run_fba_pipeline
 

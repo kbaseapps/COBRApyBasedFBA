@@ -1,7 +1,7 @@
 #
 # Define basic display information
 #
-name     : Run Flux Balance Analysis (COBRApy)
+name     : Flux Balance Analysis (COBRApy)
 
 tooltip  : |
     Predict metabolite fluxes in a metabolic model of an organism grown on a given media using flux balance analysis (FBA).
@@ -41,12 +41,6 @@ parameters :
         short-hint : |
             Select optimization solver to use. The open source solvers [GLPK, COINOR-CBC] are available.
 
-    minimize_flux :
-        ui-name : |
-            Minimize Flux?
-        short-hint : |
-            Check this box to minimize the sum of all fluxes *after* the primary objective function has been optimized i.e. run parsimonious FBA.
-
     all_reversible :
         ui-name : |
             Make all reactions reversible?
@@ -59,29 +53,29 @@ parameters :
         short-hint : |
             Check this box to minimize the model objective. If unchecked, objective will be maximized.
 
-    loopless_fba :
+    fba_type :
         ui-name : |
-            Run loopless FBA?
+            FBA type
         short-hint : |
-            Check this box to run loopless FBA with the CycleFreeFlux algorithm. Does not run if *Minimize Flux* is checked.
+            Select between pFBA, loopless FBA with the CycleFreeFlux algorithm or regular FBA.
 
-    loopless_fva :
+    fva_type :
         ui-name : |
-            Run loopless FVA?
+            FVA type
         short-hint : |
-            Check this box to run loopless FVA with the CycleFreeFlux algorithm.
+            Minimize and maximize all reaction fluxes, enabling reaction classification. Select between regular FVA or loopless FVA with the CycleFreeFlux algorithm. Select Neither to skip FVA.
 
     fraction_of_optimum_pfba :
         ui-name : |
-            Fraction of optimum for minimizing flux
+            Fraction of optimum for pFBA
         short-hint : |
-            Sets fraction of optimum for *Minimize Flux* i.e. parsimonious FBA. Value must be between 0 and 1, defaults to 1.
+            Sets fraction of optimum for parsimonious FBA (pFBA). Value must be between 0 and 1, defaults to 1.
 
     fraction_of_optimum_fva :
         ui-name : |
             Fraction of optimum for FVA
         short-hint : |
-            Sets fraction of optimum for *Flux Variability Analysis*. Value must be between 0 and 1, defaults to 0.1.
+            Sets fraction of optimum for Flux Variability Analysis (FVA). Value must be between 0 and 1, defaults to 0.1.
 
     max_c_uptake :
         ui-name : |
@@ -128,12 +122,6 @@ parameters :
             The fluxes for all reactions in the metabolic model and the predicted growth of biomass according to the FBA model.
         placeholder : |
             ID for saving FBA results
-
-    fva :
-        ui-name : |
-            Flux Variability Analysis?
-        short-hint : |
-            Check this box to conduct the Flux Variability Analysis. Minimize and maximize all reaction fluxes, enabling reaction classification.
 
     target_reaction :
         ui-name : |
@@ -202,7 +190,7 @@ description : |
 
     <p>This App constructs a model of how metabolites flow through the metabolic network of a microbe or a plant. Flux Balance Analysis (FBA) is a constraint-based approach that estimates growth-optimal fluxes through all reactions in the metabolic network, thereby making it possible to estimate the growth rate of an organism (the rate of biomass production) or the rate of production of a given metabolic output on a specified media.This App allows you to analyze the organism's growth on different substrates and to evaluate the reactions and metabolites that carry fluxes in each growth condition.</p>
 
-    <p>The <i>Run Flux Balance Analysis</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
+    <p>The <i>Flux Balance Analysis (COBRApy)</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
 
     <p>The “media formulation,” or <a href=”https://narrative.kbase.us/#spec/type/KBaseBiochem.Media”>“Media typed object,”</a>  contains the chemical compounds on which to analyze the growth of your organism. KBase provides users with more than 500 commonly used media conditions to use when running FBA. Importing a media formulation into your Narrative is discussed in Step 1 of the point and click instructions below.</p>
 

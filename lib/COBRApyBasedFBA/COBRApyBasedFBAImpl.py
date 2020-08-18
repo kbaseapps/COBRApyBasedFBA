@@ -101,11 +101,11 @@ class COBRApyBasedFBA:
         print('PARAMS')
         print(params)
 
-        # TODO: temp fix. Filipe's problem
+        # TODO: temp fix. fix cobrakbase
         if params['target_reaction'] == 'bio1':
           params['target_reaction'] += '_biomass'
 
-        # TODO: this is temp fix. UI does not contain workspace. update spec
+        # TODO: temp fix. UI does not contain workspace. update spec
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
 
@@ -125,8 +125,6 @@ class COBRApyBasedFBA:
 
         builder = KBaseFBAModelToCobraBuilder(fbamodel)
         model = builder.with_media(media).build()
-
-        print(model.summary())
 
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object

@@ -64,7 +64,7 @@ class FBAPipeline:
         # Custom bounds to add to reaction in model
         self.custom_bound_list = []
 
-        # TODO: write comment. should this be removed?
+        # TODO: write comment. should this be removed? Currently only here for report.
         self.media_supplement_list = []
 
         # Kbase ID of the returning FBA object.
@@ -228,7 +228,7 @@ class FBAPipeline:
                                                 media,
                                                 self.workspace)
         
-        # TODO: add fva_sol and essential_genes to this object in cobrakbase
+        # TODO: essential_genes to this object in cobrakbase
         return fba_builder.build(), fva_sol, fba_sol, essential_genes
 
 def build_report(pipeline, model, fba_sol, fva_sol,

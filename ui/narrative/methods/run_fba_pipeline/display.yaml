@@ -67,15 +67,15 @@ parameters :
 
     fraction_of_optimum_pfba :
         ui-name : |
-            Fraction of optimum for minimizing flux
+            Fraction of optimum for pFBA
         short-hint : |
-            Sets fraction of optimum for *pFBA* i.e. parsimonious FBA. Value must be between 0 and 1, defaults to 1.
+            Sets fraction of optimum for parsimonious FBA (pFBA). Value must be between 0 and 1, defaults to 1.
 
     fraction_of_optimum_fva :
         ui-name : |
             Fraction of optimum for FVA
         short-hint : |
-            Sets fraction of optimum for *Flux Variability Analysis*. Value must be between 0 and 1, defaults to 0.1.
+            Sets fraction of optimum for Flux Variability Analysis (FVA). Value must be between 0 and 1, defaults to 0.1.
 
     max_c_uptake :
         ui-name : |

@@ -98,7 +98,6 @@ class COBRApyBasedFBA:
         #BEGIN run_fba_pipeline
 
         # TODO: for debugging. remove all prints
-        print('PARAMS')
         print(params)
 
         # TODO: temp fix. fix cobrakbase
@@ -157,7 +156,6 @@ class COBRApyBasedFBA:
         }
 
         report = KBaseReport(self.callback_url, token=ctx['token'])
-        #report_info = report.create({'report', : report_params, 'workspace_name': params['workspace']})
         report_info = report.create_extended_report(report_params)
 
         # Contruct the output to send back

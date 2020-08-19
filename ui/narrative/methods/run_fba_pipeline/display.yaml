@@ -197,7 +197,7 @@ description : |
     <p>KBase offers several ways to load metabolic models into your Narrative so that they can be used as one of the required inputs for this and other Apps:
     <ol>
       <li>Upload your own data in either SBML (systems biology markup language) or TSV (tab-separated values) format from your local machine. See the <a href=”http://kbase.us/data-upload-download-guide/fba-model/”>FBA Model section of the Data Upload and Download Guide</a> for instructions.</li>
-      <li>Search for and add to your Narrative an FBA model from KBase’s reference data collection.</li>
+      <li>Search for and add to your Narrative an FBA model from KBase&apos;s reference data collection.</li>
       <li>Use example data from the Data Browser slideout.</li>
       <li>Use an FBA model that you worked with in another Narrative or that another user has shared with you.</li>
     </ol>
@@ -205,9 +205,7 @@ description : |
 
     <p>For more help with running FBA, check out this <a href="http://kbase.us/run-flux-balance-analysis-method/" target="_blank">Narrative Tutorial</a>.</p>
 
-    <p><strong>Reactions to Maximize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to maximize the flux through a particular reaction, then you may use the “Reaction to maximize” parameter. This allows you to select one or more reactions from your model to maximize the amount of flux driven through while still allowing for growth. You may select multiple reactions, and they may be part of the same pathway or independent of each other.</p>
-
-    <p><strong>Expression Data</strong><br>The App allows you to run the model of the organism on the specified media with the reactions turned on or off according to expression data. First, start by selecting an expression data set from your data panel and then selecting a single expression condition from within it. Then set a threshold for allowing the genes to be turned on and off. The percent of genes at the top of the expression list above this threshold will be set to ON, and the percent of genes at the bottom of the expression list below this threshold will be set to OFF.</p>
+    <p><strong>Reactions to Optimize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to maximize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select one or more reactions from your model to optimize the amount of flux driven through while still allowing for growth.</p>
 
     <p><strong>Output</strong><br>Once the FBA finishes running, information on the flux distribution is displayed in an output table with six tabs:
     <ul>

@@ -207,7 +207,17 @@ description : |
 
     <p><strong>Reactions to Optimize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to optimize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select one or more reactions from your model to optimize the amount of flux driven through while still allowing for growth.</p>
 
-    <p><strong>Output</strong><br>Once the FBA finishes running, information on the flux distribution is displayed in an output table with six tabs:
+    <p><strong>Output Report</strong><br>Once the FBA finishes running, an output report is generated detailing the results with the following tabs:
+    <ul>
+      <li><u>Summary:</u> this tab displays the default FBA model summary printed by COBRApy showing the input and output reaction flux values as well as the objective value. An ATP summary is also displayed, detailing which reactions produce and consume ATP. Included are the percentage of ATP consumed or produced and the flux for each reaction.</li>
+      <li><u>Overview:</u> this tab displays a brief overview of the model optimization results including some of the parameters selected during the App's configuration step. Among the values displayed are the optimization status, i.e. whether or not an optimal solution was found, the objective value, which FBA and FVA types were selected and several model parameters including the fraction of optimium for FVA. This tab only contains data if an <em>FVA type</em> is not <em>Neither</em>.</li>
+      <li><u>Reactions:</u> this tab displays the numerical flux values, minimum and maximum flux bounds, biochemical equations and the class of each reaction. See below for how the reaction class is determined.</li>
+      <li><u>Exchange Reactions:</u> this tab displays exchange fluxes that describe the rates at which nutrients are taken in and byproducts are secreted. Positive exchange flux values represent the uptake of compounds, and negative exchange flux values represent the excretion of compounds. The reaction class is also shown listing which exchange reactions are essential, functional or blocked in the metabolism. This tab only contains data if an <em>FVA type</em> is not <em>Neither</em>.</li>
+      <li><u>Genes:</u> this tab displays the gene knockout information, i.e. whether or not each particular gene is essential or not. This tab only has contents if <em>Simulate All Single KO?</em> is selected.</li>
+    </ul>
+    </p>
+
+    <p><strong>FBA Object Viewer</strong><br>In addition to the <em>Output Report</em>, an <em>Object Viewer</em> is also generated displaying information on the flux distribution in an output table with the following tabs:
     <ul>
       <li><u>Overview:</u> this tab displays summary information such as the objective value (growth of the model), which is important because it represents the maximum achievable flux through the biomass reaction of the metabolic model. An objective value of 0 or something very close to 0 means that the model did not grow on the specified media. This tab also lists other information, including the genome, media formulation, number of reactions, and number of compounds associated with the FBA.</li>
       <li><u>Reaction fluxes:</u> this tab displays the numerical flux values, minimum and maximum flux bounds, biochemical equations, and associated genes for each reaction in the model. This information represents the fluxes through all internal reactions that allow for growth and byproduct creation. These fluxes can be further broken down into biological pathways of interest (see Pathways tab). A user may ask, for example, “How much fatty acid is being produced?” or “What are the high flux reactions or pathways?”</li>
@@ -218,10 +228,20 @@ description : |
     </ul>
     </p>
 
-    <p>For additional information about metabolic modeling, visit the <a href="https://kbase.us/metabolic-modeling-faq/">Metabolic Modeling in KBase FAQ</a>.<p>
+    <hr>
 
-    <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
-    Chris Henry, Janaka Edirisinghe, Sam Seaver, and Neal Conrad. For questions, please <a href="http://kbase.us/contact-us/">contact us</a>.</p>
+    <p><strong>Determining Reaction Class</strong> Reaction classes display whether the reaction is essential, functional or blocked in the metabolism. To determine this we use the following rules:
+    <ul>
+      <li><u>Essential:</u> if the FVA min flux is greater than 0 or max flux is less than 0.</li>
+      <li><u>Functional:</u> if the FVA min flux is less than 0 or the max flux is greater than 0.</li>
+      <li><u>Blocked:</u> if the FVA min and max fluxes are both 0.</li>
+    </ul>
+    </p>
+
+    <p>For additional information about metabolic modeling, visit the <a href="https://docs.kbase.us/apps/analysis/metabolic-modeling">Metabolic Modeling in KBase FAQ</a>.<p>
+
+    <p><strong>Team members who developed & deployed App in KBase:</strong>
+    Alex Brace, Filipe Wang Liu, Jose P. Faria and Chris Henry. For questions, please <a href="https://www.kbase.us/support/">contact us</a>.</p>
 
 
 publications :

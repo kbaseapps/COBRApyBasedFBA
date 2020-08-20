@@ -31,7 +31,7 @@ parameters :
         ui-name : |
             FBA model
         short-hint : |
-            The metabolic model consisting of genome-wide set of stoichiometric reactions, compounds, and the weighted components of the biomass on which you wish to carry out Flux Balance Analysis (FBA). This model can be built using the “Build Metabolic Model” App.
+            The metabolic model consisting of genome-wide set of stoichiometric reactions, compounds, and the weighted components of the biomass on which you wish to carry out Flux Balance Analysis (FBA). This model can be built using the <a href="https://narrative.kbase.us/#appcatalog/app/fba_tools/build_metabolic_model/release">Build Metabolic Model</a> App.
         placeholder : |
             Model for FBA
 
@@ -192,14 +192,14 @@ description : |
 
     <p>As the App name suggests, all FBA, FVA and gene knockout simulations are conducted using <a href="https://opencobra.github.io/cobrapy/">COBRApy</a> which provides a Python interface to metabolic constraint-based reconstruction and analysis. This App gives the ability to rapidly test different model and media configurations by allowing users to make reactions reversible, add custom reaction bounds, knockout particular genes or reactions and specify custom nutrient uptake rates for the media.</p>
 
-    <p>Once a model and media is configured, users can run a variety of metabolic modeling algorithms listed below:</p>
+    <p>Once a model and media is configured, users can run a variety of metabolic modeling techniques as listed below:</p>
     <ol>
-      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Simulating-with-FBA">FBA</a></li>
-      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">pFBA</a></li>
-      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">Loopless FBA</a> with CycleFreeFlux algorthm</li>
-      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html?highlight=fva#Running-FVA">FVA</a></li>
-      <li><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FVA</a> with CycleFreeFlux algorthm</li>
-      <li><a href="https://cobrapy.readthedocs.io/en/latest/deletions.html#Simulating-Deletions">Gene knockout simulations</a></li>
+      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Simulating-with-FBA">FBA</a></ul>
+      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">pFBA</a></ul>
+      <ul><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FBA</a> with CycleFreeFlux algorthm</ul>
+      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html?highlight=fva#Running-FVA">FVA</a></ul>
+      <ul><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FVA</a> with CycleFreeFlux algorthm</ul>
+      <ul><a href="https://cobrapy.readthedocs.io/en/latest/deletions.html#Simulating-Deletions">Gene knockout simulations</a></ul>
     </ol>
 
     <hr>
@@ -219,14 +219,16 @@ description : |
 
     <p>For more help with running FBA, check out this <a href="http://kbase.us/run-flux-balance-analysis-method/" target="_blank">Narrative Tutorial</a>.</p>
 
-    <p><strong>Reactions to Optimize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to optimize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select any reaction from your model to optimize the amount of flux driven through while still allowing for growth.</p>
+    <hr>
+
+    <p><strong>Reaction to Optimize</strong><br>By default, the App attempts to maximize the biomass function or the total growth rate on the selected media. If instead you want to optimize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select any reaction from your model to optimize the amount of flux driven through while still allowing for growth.</p>
 
     <p><strong>Output Report</strong><br>Once the FBA finishes running, an output report is generated detailing the results with the following tabs:
     <ul>
       <li><u>Summary:</u> this tab displays the default FBA model summary printed by COBRApy showing the input and output reaction flux values as well as the objective value. An ATP summary is also displayed, detailing which reactions produce and consume ATP. Included are the percentage of ATP consumed or produced and the flux for each reaction.</li>
-      <li><u>Overview:</u> this tab displays a brief overview of the model optimization results including some of the parameters selected during the App's configuration step. Among the values displayed are the optimization status, i.e. whether or not an optimal solution was found, the objective value, which FBA and FVA types were selected and several model parameters including the fraction of optimium for FVA. This tab only contains data if an <em>FVA type</em> is not <em>Neither</em>.</li>
-      <li><u>Reactions:</u> this tab displays the numerical flux values, minimum and maximum flux bounds, biochemical equations and the class of each reaction. See below for how the reaction class is determined.</li>
-      <li><u>Exchange Reactions:</u> this tab displays exchange fluxes that describe the rates at which nutrients are taken in and byproducts are secreted. Positive exchange flux values represent the uptake of compounds, and negative exchange flux values represent the excretion of compounds. The reaction class is also shown listing which exchange reactions are essential, functional or blocked in the metabolism. This tab only contains data if an <em>FVA type</em> is not <em>Neither</em>.</li>
+      <li><u>Overview:</u> this tab displays a brief overview of the model optimization results including some of the parameters selected during the App's configuration step. Among the values displayed are the optimization status, i.e. whether or not an optimal solution was found, the objective value, which FBA and FVA types were selected and several model parameters including the fraction of optimium for FVA.</li>
+      <li><u>Reactions:</u> this tab displays the numerical flux values, minimum and maximum flux bounds, biochemical equations and the class of each reaction. See below for how the reaction class is determined. This tab only contains data if the parameter <em>FVA type</em> is not <em>Neither</em>.</li>
+      <li><u>Exchange Reactions:</u> this tab displays exchange fluxes that describe the rates at which nutrients are taken in and byproducts are secreted. Positive exchange flux values represent the uptake of compounds, and negative exchange flux values represent the excretion of compounds. The reaction class is also shown listing which exchange reactions are essential, functional or blocked in the metabolism. This tab only contains data if the parameter <em>FVA type</em> is not <em>Neither</em>.</li>
       <li><u>Genes:</u> this tab displays the gene knockout information, i.e. whether or not each particular gene is essential or not. This tab only has contents if <em>Simulate All Single KO?</em> is selected.</li>
     </ul>
     </p>

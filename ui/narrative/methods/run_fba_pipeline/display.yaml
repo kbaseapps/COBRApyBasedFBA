@@ -230,13 +230,15 @@ description : |
 
     <hr>
 
-    <p><strong>Determining Reaction Class</strong> Reaction classes display whether the reaction is essential, functional or blocked in the metabolism. To determine this we use the following rules:
+    <p><strong>Determining Reaction Class</strong><br>Reaction classes display whether the reaction is essential, functional or blocked in the metabolism. To determine this, the following rules are used:
     <ul>
       <li><u>Essential:</u> if the FVA min flux is greater than 0 or max flux is less than 0.</li>
       <li><u>Functional:</u> if the FVA min flux is less than 0 or the max flux is greater than 0.</li>
       <li><u>Blocked:</u> if the FVA min and max fluxes are both 0.</li>
     </ul>
     </p>
+
+    <hr>
 
     <p>For additional information about metabolic modeling, visit the <a href="https://docs.kbase.us/apps/analysis/metabolic-modeling">Metabolic Modeling in KBase FAQ</a>.<p>
 

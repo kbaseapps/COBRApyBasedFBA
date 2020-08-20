@@ -193,14 +193,14 @@ description : |
     <p>As the App name suggests, all FBA, FVA and gene knockout simulations are conducted using <a href="https://opencobra.github.io/cobrapy/">COBRApy</a> which provides a Python interface to metabolic constraint-based reconstruction and analysis. This App gives the ability to rapidly test different model and media configurations by allowing users to make reactions reversible, add custom reaction bounds, knockout particular genes or reactions and specify custom nutrient uptake rates for the media.</p>
 
     <p>Once a model and media is configured, users can run a variety of metabolic modeling techniques as listed below:</p>
-    <ol>
-      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Simulating-with-FBA">FBA</a></ul>
-      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">pFBA</a></ul>
-      <ul><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FBA</a> with CycleFreeFlux algorthm</ul>
-      <ul><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html?highlight=fva#Running-FVA">FVA</a></ul>
-      <ul><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FVA</a> with CycleFreeFlux algorthm</ul>
-      <ul><a href="https://cobrapy.readthedocs.io/en/latest/deletions.html#Simulating-Deletions">Gene knockout simulations</a></ul>
-    </ol>
+    <ul>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Simulating-with-FBA">FBA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">pFBA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FBA</a> with CycleFreeFlux algorthm</li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html?highlight=fva#Running-FVA">FVA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FVA</a> with CycleFreeFlux algorthm</li>
+      <li><a href="https://cobrapy.readthedocs.io/en/latest/deletions.html#Simulating-Deletions">Gene knockout simulations</a></li>
+    </ul>
 
     <hr>
 

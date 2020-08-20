@@ -45,7 +45,7 @@ parameters :
         ui-name : |
             Make all reactions reversible?
         short-hint : |
-            Check this box to make all reactions in the model reversible.
+            Check this box to make all reactions in the model reversible. If selected, reactions are made reversible before custom bounds are added and before reaction knockouts are applied.
 
     minimize_objective :
         ui-name : |
@@ -75,7 +75,7 @@ parameters :
         ui-name : |
             Fraction of optimum for FVA
         short-hint : |
-            Sets fraction of optimum for Flux Variability Analysis (FVA). Value must be between 0 and 1, defaults to 0.1.
+            Sets fraction of optimum for Flux Variability Analysis (FVA). Value must be between 0 and 1, defaults to 0.1. Using 0.1 we see the flux requirements for suboptimal growth, i.e. any growth at all, versus COBRApy's default of 1 which returns fluxes only for optimal growth.
 
     max_c_uptake :
         ui-name : |
@@ -161,21 +161,21 @@ parameters :
 
     custom_reaction_id :
         ui-name : |
-            Reaction id
+            Custom reaction id
         short-hint : |
             Reaction id to add custom bound to.
 
     custom_lb :
         ui-name : |
-            Lower bound
+            Custom lower bound
         short-hint : |
-            Custom lower bound for the reaction.
+            Custom lower bound for the custom reaction.
 
     custom_ub :
         ui-name : |
-            Upper bound
+            Custom upper bound
         short-hint : |
-            Custom upper bound for the reaction.
+            Custom upper bound for the custom reaction.
 
 parameter-groups:
     custom_bound_list:
@@ -188,7 +188,21 @@ icon: fba-teal.png
 
 description : |
 
-    <p>This App constructs a model of how metabolites flow through the metabolic network of a microbe or a plant. Flux Balance Analysis (FBA) is a constraint-based approach that estimates growth-optimal fluxes through all reactions in the metabolic network, thereby making it possible to estimate the growth rate of an organism (the rate of biomass production) or the rate of production of a given metabolic output on a specified media.This App allows you to analyze the organism's growth on different substrates and to evaluate the reactions and metabolites that carry fluxes in each growth condition.</p>
+    <p>This App constructs a model of how metabolites flow through the metabolic network of a microbe or a plant. Flux Balance Analysis (FBA) is a constraint-based approach that estimates growth-optimal fluxes through all reactions in the metabolic network, thereby making it possible to estimate the growth rate of an organism (the rate of biomass production) or the rate of production of a given metabolic output on a specified media. This App allows you to analyze the organism's growth on different substrates and to evaluate the reactions and metabolites that carry fluxes in each growth condition.</p>
+
+    <p>As the App name suggests, all FBA, FVA and gene knockout simulations are conducted using <a href="https://opencobra.github.io/cobrapy/">COBRApy</a> which provides a Python interface to metabolic constraint-based reconstruction and analysis. This App gives the ability to rapidly test different model and media configurations by allowing users to make reactions reversible, add custom reaction bounds, knockout particular genes or reactions and specify custom nutrient uptake rates for the media.</p>
+
+    <p>Once a model and media is configured, users can run a variety of metabolic modeling algorithms listed below:</p>
+    <ol>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Simulating-with-FBA">FBA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">pFBA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html#Running-pFBA">Loopless FBA</a> with CycleFreeFlux algorthm</li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/simulating.html?highlight=fva#Running-FVA">FVA</a></li>
+      <li><a href="https://cobrapy.readthedocs.io/en/stable/loopless.html#Loopless-FBA">Loopless FVA</a> with CycleFreeFlux algorthm</li>
+      <li><a href="https://cobrapy.readthedocs.io/en/latest/deletions.html#Simulating-Deletions">Gene knockout simulations</a></li>
+    </ol>
+
+    <hr>
 
     <p>The <i>Flux Balance Analysis (COBRApy)</i> App takes a metabolic model and a media formulation as input. In KBase, an “FBAModel” or “Metabolic Model typed object” contains the reactions, compounds, compartments, biomass reactions, and gene associations that comprise a metabolic model. Such models can be built by other KBase Apps, like the <a href=”https://narrative.kbase.us/#catalog/apps/fba_tools/build_metabolic_model/”>Build Metabolic Model</a> App. </p>
 
@@ -205,7 +219,7 @@ description : |
 
     <p>For more help with running FBA, check out this <a href="http://kbase.us/run-flux-balance-analysis-method/" target="_blank">Narrative Tutorial</a>.</p>
 
-    <p><strong>Reactions to Optimize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to optimize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select one or more reactions from your model to optimize the amount of flux driven through while still allowing for growth.</p>
+    <p><strong>Reactions to Optimize</strong><br>By default, the App is attempting to maximize the biomass function or the total growth rate on the selected media. If instead you want to optimize the flux through a particular reaction, then you may use the <em>Reaction to optimize</em> parameter. This allows you to select any reaction from your model to optimize the amount of flux driven through while still allowing for growth.</p>
 
     <p><strong>Output Report</strong><br>Once the FBA finishes running, an output report is generated detailing the results with the following tabs:
     <ul>
@@ -230,7 +244,7 @@ description : |
 
     <hr>
 
-    <p><strong>Determining Reaction Class</strong><br>Reaction classes display whether the reaction is essential, functional or blocked in the metabolism. To determine this, the following rules are used:
+    <p><strong>Determining Reaction Class</strong><br>Only active if FVA or loopless FVA is selected, reaction classes display whether the reaction is essential, functional or blocked in the metabolism. To determine this, the following rules are used:
     <ul>
       <li><u>Essential:</u> if the FVA min flux is greater than 0 or max flux is less than 0.</li>
       <li><u>Functional:</u> if the FVA min flux is less than 0 or the max flux is greater than 0.</li>

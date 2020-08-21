@@ -1,5 +1,5 @@
 FROM kbase/sdkbase2:python
-MAINTAINER KBase Developer
+MAINTAINER Alex Brace
 # -----------------------------------------
 # In this section, you can install any system dependencies required
 # to run your App.  For instance, you could place an apt-get update or
@@ -26,7 +26,7 @@ RUN mkdir deps && cd deps && \
     cd cobrapy && git checkout feature/coinor-cbc_osqp && cd .. && \
     pip install optlang/ && \
     pip install cobrapy/ && cd .. && \
-    pip install cobrakbase==0.2.5 && \
+    pip install cobrakbase==0.2.7 && \
     pip install Jinja2
 
 # -----------------------------------------

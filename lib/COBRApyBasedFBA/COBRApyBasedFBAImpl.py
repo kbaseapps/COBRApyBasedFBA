@@ -8,7 +8,8 @@ from pprint import pformat
 
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.DataFileUtilClient import DataFileUtil
-from COBRApyBasedFBA.fba_pipeline import FBAPipeline, build_report
+from COBRApyBasedFBA.fba_pipeline import FBAPipeline
+from COBRApyBasedFBA.report import build_report
 from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
 import cobrakbase
 #END_HEADER
@@ -47,6 +48,7 @@ class COBRApyBasedFBA:
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
         self.dfu = DataFileUtil(self.callback_url)
+        self.config = config
 
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
@@ -104,12 +106,11 @@ class COBRApyBasedFBA:
         if params['target_reaction'] == 'bio1':
           params['target_reaction'] += '_biomass'
 
-        # TODO: temp fix. UI does not contain workspace. update spec
+        # Requires media and fbamodel to be in the same workspace.
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
 
-        # TODO: toggle dev=False when we test on production
-        kbase = cobrakbase.KBaseAPI(ctx['token'], dev=True)
+        kbase = cobrakbase.KBaseAPI(ctx['token'], config=self.config)
         ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
         fbamodel_json = kbase.get_object(ref.id, ref.workspace_id)
         fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
@@ -129,6 +130,7 @@ class COBRApyBasedFBA:
         # Result is fba type object
         result, fva_sol, fba_sol, essential_genes = pipeline.run(model, media)
         # kbase_ref is list of lists with only one inner list
+        # TODO: switch to dfu save_object
         kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
         html_report_folder = os.path.join(self.shared_folder, 'subfolder')

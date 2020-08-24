@@ -109,6 +109,7 @@ class COBRApyBasedFBA:
         # Requires media and fbamodel to be in the same workspace.
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
+        workspace_id = int(params['fbamodel_id'].split('/')[0])
 
         kbase = cobrakbase.KBaseAPI(ctx['token'], config=self.config)
         ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
@@ -131,8 +132,9 @@ class COBRApyBasedFBA:
         result, fva_sol, fba_sol, essential_genes = pipeline.run(model, media)
 
         # Save result object with dfu
+        print('ws id:', workspace_id)
         save_object_params = {
-            'id': params['workspace'],
+            'id': workspace_id,
             'objects': [{
                 'type': 'KBaseFBA.FBA',
                 'data': result,

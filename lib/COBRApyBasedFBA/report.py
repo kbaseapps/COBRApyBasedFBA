@@ -50,7 +50,7 @@ def class_formater(rct_id, fva_sol):
     return 'functional'
 
 # Helper function to format reaction/ex-reaction display data
-def reaction_formater(fba_sol, fva_sol, ex):
+def reaction_formater(model, fba_sol, fva_sol, ex):
     """ex specifies exchange reaction"""
     if fva_sol is None:
         return json.dumps([])
@@ -188,12 +188,12 @@ def build_report(pipeline, model, fba_sol, fva_sol,
                                ],
                'reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fba_sol, fva_sol, ex=False),
+                   'reactions': reaction_formater(model, fba_sol, fva_sol, ex=False),
                    'help': 'Select FVA setting and rerun to produce results.'
                 },
                'ex_reaction_tab': {
                    'is_reactions': fva_sol is not None,
-                   'reactions': reaction_formater(fba_sol, fva_sol, ex=True),
+                   'reactions': reaction_formater(model, fba_sol, fva_sol, ex=True),
                    'help': 'Select FVA setting and rerun to produce results.'
                 },
                 'essential_genes_tab': {

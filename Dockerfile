@@ -15,7 +15,7 @@ MAINTAINER Alex Brace
 RUN pip install --upgrade pip setuptools wheel cffi && \
     pip install --upgrade pyopenssl ndg-httpsclient && \
     pip install --upgrade pyasn1 requests 'requests[security]' && \
-    pip install ruamel.yaml==0.16.10 coverage networkx cython
+    pip install coverage networkx cython
 
 # Install forked version of optlang and cobrapy to add
 # additional solver support COINOR-CBC,CLP and OSQP

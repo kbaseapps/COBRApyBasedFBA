@@ -25,7 +25,8 @@ RUN mkdir deps && cd deps && \
     git clone https://github.com/braceal/cobrapy.git && \
     cd cobrapy && git checkout feature/coinor-cbc_osqp && cd .. && \
     pip install optlang/ && \
-    pip install cobrapy/ && cd .. && \
+    pip install cobrapy/ --ignore-installed && cd .. && \
+    pip install cobrakbase==0.2.7 --ignore-installed && \
     pip install Jinja2 
 
 # -----------------------------------------

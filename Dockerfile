@@ -15,7 +15,7 @@ MAINTAINER Alex Brace
 RUN pip install --upgrade pip setuptools wheel cffi && \
     pip install --upgrade pyopenssl ndg-httpsclient && \
     pip install --upgrade pyasn1 requests 'requests[security]' && \
-    pip install coverage networkx cython
+    pip install coverage networkx cython && \
     pip install cobrakbase==0.2.7 --ignore-installed && \
 
 # Install forked version of optlang and cobrapy to add

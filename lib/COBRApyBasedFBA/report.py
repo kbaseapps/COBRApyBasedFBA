@@ -134,6 +134,7 @@ def atp_summary_formatter(model):
         return msg, False
 
     print(df)
+    
 
     rcts = [(model.reactions.get_by_id(rct_id), rct_id)
             for rct_id in df.index.get_level_values(1)]

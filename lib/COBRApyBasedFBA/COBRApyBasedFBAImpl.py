@@ -129,9 +129,19 @@ class COBRApyBasedFBA:
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object
         result, fva_sol, fba_sol, essential_genes = pipeline.run(model, media)
-        # kbase_ref is list of lists with only one inner list
-        # TODO: switch to dfu save_object
-        kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
+
+        # Save result object with dfu
+        save_object_params = {
+            'id': params['workspace'],
+            'objects': [{
+                'type': 'KBaseFBA.FBA',
+                'data': result,
+                'name': result['id'] # ?
+            }]
+        }
+        self.dfu.save_objects(save_object_params)
+
+        #kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
         html_report_folder = os.path.join(self.shared_folder, 'subfolder')
         os.makedirs(html_report_folder, exist_ok=True)

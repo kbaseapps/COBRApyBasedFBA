@@ -15,7 +15,7 @@ MAINTAINER Alex Brace
 RUN pip install --upgrade pip setuptools wheel cffi && \
     pip install --upgrade pyopenssl ndg-httpsclient && \
     pip install --upgrade pyasn1 requests 'requests[security]' && \
-    pip install ruamel.yaml coverage networkx cython
+    pip install ruamel.yaml coverage networkx cython Jinja2 cobrakbase==0.2.7
 
 # Install forked version of optlang and cobrapy to add
 # additional solver support COINOR-CBC,CLP and OSQP
@@ -25,9 +25,7 @@ RUN mkdir deps && cd deps && \
     git clone https://github.com/braceal/cobrapy.git && \
     cd cobrapy && git checkout feature/coinor-cbc_osqp && cd .. && \
     pip install optlang/ && \
-    pip install cobrapy/ && cd .. && \
-    pip install cobrakbase==0.2.7 && \
-    pip install Jinja2
+    pip install cobrapy/ && cd ..
 
 # -----------------------------------------
 

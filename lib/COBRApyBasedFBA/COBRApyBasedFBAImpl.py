@@ -132,18 +132,15 @@ class COBRApyBasedFBA:
         result, fva_sol, fba_sol, essential_genes = pipeline.run(model, media)
 
         # Save result object with dfu
-        print('ws id:', workspace_id)
         save_object_params = {
             'id': workspace_id,
             'objects': [{
                 'type': 'KBaseFBA.FBA',
                 'data': result,
-                'name': result['id'] # ?
+                'name': result['id'] # TODO: is this corect?
             }]
         }
         self.dfu.save_objects(save_object_params)
-
-        #kbase_ref = kbase.save_object(result['id'], params['workspace'], 'KBaseFBA.FBA', result)
 
         html_report_folder = os.path.join(self.shared_folder, 'subfolder')
         os.makedirs(html_report_folder, exist_ok=True)

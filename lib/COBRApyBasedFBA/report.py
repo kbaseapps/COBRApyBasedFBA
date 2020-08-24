@@ -133,6 +133,8 @@ def atp_summary_formatter(model):
               'order to display an ATP summary.'
         return msg, False
 
+    print(df)
+
     rcts = [(model.reactions.get_by_id(rct_id), rct_id)
             for rct_id in df.index.get_level_values(1)]
 

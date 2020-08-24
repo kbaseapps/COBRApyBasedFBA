@@ -119,6 +119,7 @@ def atp_summary_formatter(model):
     """Returns list of ATP summary values if metabolites are found
        or a message stating they could not be found. Also return a
        bool specicifying whether or not summary exists."""
+
     # Select ATP metabolite
     if 'atp_c' in model.metabolites:
         df = model.metabolites.atp_c.summary().to_frame()

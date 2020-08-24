@@ -16,16 +16,20 @@ RUN pip install --upgrade pip setuptools wheel cffi && \
     pip install --upgrade pyopenssl ndg-httpsclient && \
     pip install --upgrade pyasn1 requests 'requests[security]' && \
     pip install coverage networkx cython
+    pip install cobrakbase==0.2.7 --ignore-installed && \
 
 # Install forked version of optlang and cobrapy to add
-# additional solver support COINOR-CBC,CLP and OSQP
+# additional solver support COINOR-CBC,CLP and OSQP.
+# Must install cobrakbase first since it installs a newer version
+# of cobra not supported on the custom branches for optlang/cobra.
+# Running with --ignore-installed will overwrite with the correct
+# cobra version.
 RUN mkdir deps && cd deps && \
     git clone https://github.com/braceal/optlang.git && \
     cd optlang && git checkout test/coinor-cbc_osqp && cd .. && \
     git clone https://github.com/braceal/cobrapy.git && \
     cd cobrapy && git checkout feature/coinor-cbc_osqp && cd .. && \
-    pip install optlang/ && \
-    pip install cobrakbase==0.2.7 --ignore-installed && \
+    pip install optlang/ --ignore-installed && \
     pip install cobrapy/ --ignore-installed && cd .. && \
     pip install Jinja2 
 

@@ -99,9 +99,6 @@ class COBRApyBasedFBA:
         # return variables are: results
         #BEGIN run_fba_pipeline
 
-        # TODO: for debugging. remove all prints
-        print(params)
-
         # TODO: temp fix. fix cobrakbase
         if params['target_reaction'] == 'bio1':
           params['target_reaction'] += '_biomass'
@@ -137,7 +134,7 @@ class COBRApyBasedFBA:
             'objects': [{
                 'type': 'KBaseFBA.FBA',
                 'data': result,
-                'name': result['id'] # TODO: is this corect?
+                'name': result['id']
             }]
         }
         self.dfu.save_objects(save_object_params)

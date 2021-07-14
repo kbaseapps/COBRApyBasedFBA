@@ -224,7 +224,8 @@ class FBAPipeline:
                                                  model,
                                                  fba_sol,
                                                  media,
-                                                 self.workspace)
+                                                 self.workspace,
+                                                 self.target_reaction)
 
         kbase_fba_obj = fba_builder.with_cobra_fva_solution(fva_sol).build()
         

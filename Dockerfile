@@ -21,8 +21,9 @@ RUN pip install --upgrade pip setuptools wheel cffi && \
 
 RUN git clone -b cobra-model https://github.com/Fxe/cobrakbase.git /opt/build/cobrakbase
 RUN git clone https://github.com/ModelSEED/ModelSEEDpy.git /opt/build/modelseedpy
-RUN pip install /opt/build/modelseedpy
 RUN pip install /opt/build/cobrakbase
+RUN pip install /opt/build/modelseedpy
+
 
 
 # Install forked version of optlang and cobrapy to add

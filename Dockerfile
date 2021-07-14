@@ -10,7 +10,7 @@ MAINTAINER Alex Brace
 
 # Here we install a python coverage tool and an
 # https library that is out of date in the base image.
-
+RUN rm -rf /miniconda/lib/python3.6/site-packages/ruamel*
 RUN rm -rf /miniconda/lib/python3.6/site-packages/numpy
 # update security libraries in the base image
 RUN pip install --upgrade pip setuptools wheel cffi && \

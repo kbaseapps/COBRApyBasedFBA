@@ -10,7 +10,7 @@ from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.DataFileUtilClient import DataFileUtil
 from COBRApyBasedFBA.fba_pipeline import FBAPipeline
 from COBRApyBasedFBA.report import build_report
-from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
+#from cobrakbase.core.converters import KBaseFBAModelToCobraBuilder
 import cobrakbase
 #END_HEADER
 
@@ -99,10 +99,6 @@ class COBRApyBasedFBA:
         # return variables are: results
         #BEGIN run_fba_pipeline
 
-        # TODO: temp fix. fix cobrakbase
-        if params['target_reaction'] == 'bio1':
-          params['target_reaction'] += '_biomass'
-
         # Requires media and fbamodel to be in the same workspace.
         params['fbamodel_workspace'] = params['workspace']
         params['media_workspace'] = params['workspace']
@@ -110,19 +106,13 @@ class COBRApyBasedFBA:
 
         kbase = cobrakbase.KBaseAPI(ctx['token'], config=self.config)
         ref = kbase.get_object_info_from_ref(params['fbamodel_id'])
-        fbamodel_json = kbase.get_object(ref.id, ref.workspace_id)
-        fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
+        model = kbase.get_from_ws(ref.id, ref.workspace_id)
+        #fbamodel = cobrakbase.core.model.KBaseFBAModel(fbamodel_json)
         
         # Retrieve media
         ref = kbase.get_object_info_from_ref(params['media_id'])
-        media_json = kbase.get_object(ref.id, ref.workspace_id)
-        media = cobrakbase.core.KBaseBiochemMedia(media_json)
-
-        # TODO: add extra compounds to media with params['media_supplement_list']
-        #       see what these params look like
-
-        builder = KBaseFBAModelToCobraBuilder(fbamodel)
-        model = builder.with_media(media).build()
+        media = kbase.get_from_ws(ref.id, ref.workspace_id)
+        model.medium = media
 
         pipeline = FBAPipeline.fromKBaseParams(params)
         # Result is fba type object

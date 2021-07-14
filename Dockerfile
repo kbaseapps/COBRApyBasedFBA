@@ -16,8 +16,11 @@ RUN rm -rf /miniconda/lib/python3.6/site-packages/numpy
 RUN pip install --upgrade pip setuptools wheel cffi && \
     pip install --upgrade pyopenssl ndg-httpsclient && \
     pip install --upgrade pyasn1 requests 'requests[security]' && \
-    pip install coverage networkx cython && \
-    pip install cobrakbase==0.2.7 --ignore-installed
+    pip install coverage networkx cython
+#    pip install cobrakbase==0.2.7 --ignore-installed
+
+RUN git clone -b cobra-model https://github.com/Fxe/cobrakbase.git /opt/build/cobrakbase
+RUN pip install /opt/build/cobrakbase
 
 # Install forked version of optlang and cobrapy to add
 # additional solver support COINOR-CBC,CLP and OSQP.
